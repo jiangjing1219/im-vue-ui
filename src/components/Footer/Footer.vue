@@ -17,18 +17,8 @@ function onSearch(value: string) {
     });
     return;
   }
-  /**
-   * {
-   *     "messageId": "sj1ce5zecl1717519501744",
-   *     "appId": 10000,
-   *     "messageRandom": 6156,
-   *     "messageTime": 1717519501000,
-   *     "fromId": "311968820887553",
-   *     "toId": "312144459464705",
-   *     "messageBody": "{\"type\":1,\"content\":\"你好呀\"}"
-   * }
-   */
-  console.log(ImSdk.createP2PTextMessage('312144459464705', value));
+  // 发送完成之后文本置空
+  inputText.value = '';
   const message = ImSdk.createP2PTextMessage('312144459464705', value);
   // 发送单聊消息
   ImSdk.sendP2PMessage(message);
@@ -56,6 +46,7 @@ function onSearch(value: string) {
       :bordered="false"
       placeholder="请输入你想和 ta 说的话"
       size="large"
+      @keyup.enter="onSearch(inputText)"
     >
       <template #suffix>
         <el-icon style="font-size: 40px" color="#4F9DDE" @click="onSearch(inputText)">

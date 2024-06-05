@@ -52,9 +52,13 @@ import { ElMessage, ElNotification } from 'element-plus';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import ListenerMap from '@/listener';
+import { useUserInfoStore } from '@/store/userInfo';
+import { useConversationSetStore } from '@/store/conversationSet';
 
 const router = useRouter();
 const ImSdk = inject('ImSdk');
+const userInfoStore = useUserInfoStore();
+const conversationSet = useConversationSetStore();
 
 if (!ImSdk) {
   ElNotification({
@@ -93,15 +97,20 @@ const submit = () => {
           type: 'success',
         });
         const {
-          appId, imUserSign, userId, userSign,
+          appId,
+          imUserSign,
+          userId,
+          userSign,
         } = data.data;
-        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap, (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           if (sdk) {
             ElNotification({
               title: 'Success',
               message: 'WebSocket 连接建立成功!',
               type: 'success',
             });
+            userInfoStore.setUserInfo(data.data);
+            conversationSet.syncConversationSet();
             router.push({ path: '/conversation' });
           } else {
             ElNotification({
@@ -114,7 +123,7 @@ const submit = () => {
       } else {
         ElNotification({
           title: 'Error',
-          message: '业务系统登陆失败！请联系业务系统管理员',
+          message: '业务系统登陆失败！请联系业务系统管理员1',
           type: 'error',
         });
       }
@@ -122,10 +131,11 @@ const submit = () => {
     .catch((error) => {
       ElNotification({
         title: 'Error',
-        message: '业务系统登陆失败！请联系业务系统管理员',
+        message: '业务系统登陆失败！请联系业务系统管理员2',
         type: 'error',
       });
     });
+  console.log('-----------------------');
 };
 </script>
 
