@@ -1,6 +1,9 @@
 import { useMessageRecordStore } from '@/store/messageRecord';
+import { useFriendRequestStore } from '@/store/friendRequestList';
+import { ImFriendShipRequest } from '@/types';
 
 const ListenerMap = () => {
+  const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
   return {
     onSocketConnectEvent: (option: never, status: never, data: never) => {
@@ -53,6 +56,11 @@ const ListenerMap = () => {
     },
     onLogin: (uid: string) => {
       console.log(`用户${uid}登陆sdk成功`);
+    },
+    onFriendRequest: (e: any) => {
+      console.log('收到好友请求', JSON.parse(e).data);
+      const friendRequest:ImFriendShipRequest = JSON.parse(e).data;
+      friendRequestStore.addFriendShipRequest(friendRequest);
     },
   };
 };

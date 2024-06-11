@@ -54,11 +54,13 @@ import { useRouter } from 'vue-router';
 import ListenerMap from '@/listener';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
+import { userConcatListStore } from '@/store/contactsList';
 
 const router = useRouter();
 const ImSdk = inject('ImSdk');
 const userInfoStore = useUserInfoStore();
 const conversationSet = useConversationSetStore();
+const contactsList = userConcatListStore();
 
 if (!ImSdk) {
   ElNotification({
@@ -71,6 +73,18 @@ if (!ImSdk) {
 
 const userName = ref('jiangjing');
 const password = ref('123456');
+
+/**
+ * 登录需要做的初始化信息同步
+ */
+const initial = (userInfo) => {
+  // 设置当前登陆用户的信息
+  userInfoStore.setUserInfo(userInfo);
+  // 同步获取信息
+  conversationSet.syncConversationSet();
+  // 同步好友信息
+  contactsList.syncFriendShipList();
+};
 
 const submit = () => {
   if (!userName.value) {
@@ -109,9 +123,8 @@ const submit = () => {
               message: 'WebSocket 连接建立成功!',
               type: 'success',
             });
-            userInfoStore.setUserInfo(data.data);
-            conversationSet.syncConversationSet();
-            router.push({ path: '/conversation' });
+            initial(data.data);
+            router.push({ path: '/main/conversationCar' });
           } else {
             ElNotification({
               title: 'Error',
@@ -135,7 +148,6 @@ const submit = () => {
         type: 'error',
       });
     });
-  console.log('-----------------------');
 };
 </script>
 

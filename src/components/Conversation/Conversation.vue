@@ -4,7 +4,7 @@
       <TitleBar/>
     </div>
     <div class="conversations" style="flex: 1">
-      <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageRecordStore.getUserMessageRecord('312144459464705')" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
+      <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageRecordStore.getUserMessageRecord(conversationSetStore.currentConversation.toId)" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
     </div>
     <Footer/>
   </div>
@@ -15,10 +15,13 @@ import TitleBar from '@/components/TitleBar/TitleBar.vue';
 import ChatBubble from '@/components/ChatBubble/ChatBubble.vue';
 import Footer from '@/components/Footer/Footer.vue';
 import { useMessageRecordStore } from '@/store/messageRecord';
+import { useConversationSetStore } from '@/store/conversationSet';
+import { storeToRefs } from 'pinia';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from 'dayjs';
 
 const messageRecordStore = useMessageRecordStore();
+const conversationSetStore = useConversationSetStore();
 console.log(messageRecordStore);
 </script>
 

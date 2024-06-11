@@ -1,6 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
 import { UserInfo } from '@/types';
+
+/**
+ * 当前登陆用户信息
+ */
 // eslint-disable-next-line import/prefer-default-export
 export const useUserInfoStore = defineStore('userInfo', {
   state: () => ({

@@ -2,6 +2,9 @@
 import { defineStore } from 'pinia';
 import { type MessageRecord, type messageRecordMap } from '@/types';
 
+/**
+ * 消息记录
+ */
 // eslint-disable-next-line import/prefer-default-export
 export const useMessageRecordStore = defineStore('messageRecordMap', {
   state: () => ({

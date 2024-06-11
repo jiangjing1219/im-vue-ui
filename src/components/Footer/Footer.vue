@@ -4,11 +4,12 @@ import { Promotion } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { type MessageRecord } from '@/types';
+import { useConversationSetStore } from '@/store/conversationSet';
 
 const ImSdk = inject<any>('ImSdk');
 const inputText = ref('');
 const messageRecordStore = useMessageRecordStore();
-
+const conversationSetStore = useConversationSetStore();
 function onSearch(value: string) {
   if (!value) {
     ElMessage({
@@ -19,7 +20,7 @@ function onSearch(value: string) {
   }
   // 发送完成之后文本置空
   inputText.value = '';
-  const message = ImSdk.createP2PTextMessage('312144459464705', value);
+  const message = ImSdk.createP2PTextMessage(conversationSetStore.currentConversation.toId, value);
   // 发送单聊消息
   ImSdk.sendP2PMessage(message);
   const messageRecord: MessageRecord = {
@@ -35,7 +36,7 @@ function onSearch(value: string) {
     messageStatus: 0,
     isMe: true,
   };
-  messageRecordStore.addMessageRecord('312144459464705', messageRecord);
+  messageRecordStore.addMessageRecord(conversationSetStore.currentConversation.toId, messageRecord);
 }
 </script>
 

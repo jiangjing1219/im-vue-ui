@@ -1,67 +1,72 @@
 <template>
- <div class="styled-chart-app">
+  <div class="styled-chart-app">
+    <!--  左侧菜单面板  -->
     <div class="nav">
       <div style="margin: 20px 0 30px 0">
         <Avatar :src=profileImage status='online' size="60px" statusIconSize="10px"></Avatar>
       </div>
       <el-menu
-        default-active="2"
+        default-active="/main/conversationCar"
         class="el-menu-vertical-demo"
         collapse="false"
+        :router="true"
       >
-        <el-menu-item index="2">
-          <el-icon><icon-menu /></el-icon>
-          <template #title>Navigator Two</template>
+        <el-menu-item index="/main/conversationCar">
+          <el-icon :size="20">
+            <WechatFilled />
+          </el-icon>
+          <template #title>聊天</template>
         </el-menu-item>
-        <el-menu-item index="3" disabled>
-          <el-icon><document /></el-icon>
-          <template #title>Navigator Three</template>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <el-icon><setting /></el-icon>
-          <template #title>Navigator Four</template>
+        <el-menu-item index="/main/contacts">
+          <el-icon :size="20">
+            <TeamOutlined/>
+          </el-icon>
+          <template #title>通讯录</template>
         </el-menu-item>
       </el-menu>
       <div style="justify-self: end">
         <el-menu
-          default-active="2"
           class="el-menu-vertical-demo"
           collapse="false"
         >
-          <el-menu-item index="2">
-            <el-icon><icon-menu /></el-icon>
-            <template #title>Navigator Two</template>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <el-icon><Document /></el-icon>
-            <template #title>Navigator Three</template>
-          </el-menu-item>
           <el-menu-item index="4">
-            <el-icon><setting /></el-icon>
-            <template #title>Navigator Four</template>
+            <el-icon>
+              <SettingOutlined/>
+            </el-icon>
+            <template #title>设置</template>
+          </el-menu-item>
+          <el-menu-item index="5">
+            <el-icon>
+              <PoweroffOutlined/>
+            </el-icon>
+            <template #title>退出</template>
           </el-menu-item>
         </el-menu>
       </div>
     </div>
-   <div class="sidebar">
-     <message-list/>
-   </div>
-   <div class="content">
-     <conversation/>
-   </div>
- </div>
+    <!--  中间聊天列表  -->
+    <div class="sidebar">
+      <router-view/>
+    </div>
+    <!--  右侧聊天面板  -->
+    <div class="content">
+      <conversation/>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import Avatar from '@/components/Avatar/Avatar.vue';
-import MessageList from '@/components/MessageList/MessageList.vue';
-import profileImage from '../components/Avatar/demo.jpg';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  Document,
-  Menu as IconMenu,
-  Setting,
-} from '@element-plus/icons-vue';
+  WechatFilled,
+  TeamOutlined,
+  SettingOutlined,
+  PoweroffOutlined,
+} from '@ant-design/icons-vue';
 import Conversation from '@/components/Conversation/Conversation.vue';
+import { RouterView } from 'vue-router';
+import profileImage from '../components/Avatar/demo.jpg';
 
 </script>
 
