@@ -6,12 +6,12 @@
         <Avatar :src=profileImage status='online' size="60px" statusIconSize="10px"></Avatar>
       </div>
       <el-menu
-        default-active="/main/conversationCar"
+        default-active="/main/conversations"
         class="el-menu-vertical-demo"
         collapse="false"
         :router="true"
       >
-        <el-menu-item index="/main/conversationCar">
+        <el-menu-item index="/main/conversations">
           <el-icon :size="20">
             <WechatFilled />
           </el-icon>
@@ -44,14 +44,17 @@
         </el-menu>
       </div>
     </div>
-    <!--  中间聊天列表  -->
+    <div style="flex: 1">
+      <router-view/>
+    </div>
+<!--    &lt;!&ndash;  中间聊天列表  &ndash;&gt;
     <div class="sidebar">
       <router-view/>
     </div>
-    <!--  右侧聊天面板  -->
+    &lt;!&ndash;  右侧聊天面板  &ndash;&gt;
     <div class="content">
-      <conversation/>
-    </div>
+      <router-view name="rightPane"/>
+    </div>-->
   </div>
 </template>
 
@@ -64,7 +67,7 @@ import {
   SettingOutlined,
   PoweroffOutlined,
 } from '@ant-design/icons-vue';
-import Conversation from '@/components/Conversation/Conversation.vue';
+import Conversation from '@/views/messagePage/messagePage.vue';
 import { RouterView } from 'vue-router';
 import profileImage from '../components/Avatar/demo.jpg';
 

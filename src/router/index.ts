@@ -15,16 +15,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/main',
     component: () => import('@/views/Main.vue'),
-    redirect: '/main/conversationCar',
+    redirect: '/main/conversations',
     children: [{
-      path: 'conversationCar',
-      name: 'conversationCar',
-      component: () => import('@/views/MessageList/MessageList.vue'),
+      path: 'conversations',
+      name: 'conversations',
+      component: () => import('@/views/conversationPage/ConversationPage.vue'),
     },
     {
       path: 'contacts',
       name: 'contacts',
-      component: () => import('@/views/ContactCardList/ContactCardList.vue'),
+      redirect: '/main/contacts/friendRequest',
+      component: () => import('@/views/contactPage/ContactPage.vue'),
+      children: [{
+        path: 'friendRequest',
+        name: 'friendRequest',
+        component: () => import('@/views/friendRequestPage/FriendRequestPage.vue'),
+      }],
     }],
   },
 ];
