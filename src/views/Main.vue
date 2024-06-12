@@ -47,14 +47,6 @@
     <div style="flex: 1">
       <router-view/>
     </div>
-<!--    &lt;!&ndash;  中间聊天列表  &ndash;&gt;
-    <div class="sidebar">
-      <router-view/>
-    </div>
-    &lt;!&ndash;  右侧聊天面板  &ndash;&gt;
-    <div class="content">
-      <router-view name="rightPane"/>
-    </div>-->
   </div>
 </template>
 
@@ -67,7 +59,6 @@ import {
   SettingOutlined,
   PoweroffOutlined,
 } from '@ant-design/icons-vue';
-import Conversation from '@/views/messagePage/messagePage.vue';
 import { RouterView } from 'vue-router';
 import profileImage from '../components/Avatar/demo.jpg';
 
@@ -87,27 +78,8 @@ import profileImage from '../components/Avatar/demo.jpg';
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 20px);
+  height: 100vh;
   align-items: center;
-}
-
-.sidebar {
-  max-width: 448px;
-  min-width: 344px;
-  height: 100%;
-  flex: 1;
-  background: linear-gradient(119.19deg, #FFFFFF 0%, #F8F8F8 65.34%, #FFFFFF 100%);
-}
-
-.content {
-  flex: 2;
-  position: relative;
-}
-
-.drawer {
-  max-width: 310px;
-  /* 默认宽度为 0 ，点击显示设置宽度 */
-  width: 310px;
 }
 
 .el-menu-vertical-demo {

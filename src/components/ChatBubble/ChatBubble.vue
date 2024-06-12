@@ -32,6 +32,7 @@ console.log('@@', props.type === 'mine', alignSelf);
   display: flex;
   flex-direction: column;
   align-self: v-bind(alignSelf);
+  margin: 10px;
 }
 
 .bubble {
@@ -45,6 +46,7 @@ console.log('@@', props.type === 'mine', alignSelf);
   position: relative;
   /* 样式显示优先级 */
   z-index: 10;
+  align-self: v-bind(alignSelf);
   background-color: v-bind(backgroundColor);
 }
 
