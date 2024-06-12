@@ -2,6 +2,7 @@
   <div style="display: flex">
     <div class="sidebar">
       <div class="styled-contact-list">
+        <!-- 条件查询 -->
         <div class="contact-header">
           <el-input
             v-model="searchText"
@@ -20,8 +21,10 @@
             </el-icon>
           </div>
         </div>
+        <!--  显示列表  -->
         <div class="contact-body">
-          <el-card style="width: 99%; margin: 3px  0" shadow="hover">
+        <!--  【新朋友】页签  -->
+          <el-card style="width: 99%; margin: 3px  0" shadow="hover" @click="newFriendCarClick"  :class="{'car-container-click' : 'new_fiend' === currentContactCarId}">
             <div style="display: flex; align-items: center">
               <div style="height: 42px;width: 42px; background-color: rgb(211 142 22 / 20%);
       border-radius:8px;display: flex;align-items: center;justify-content: center">
@@ -34,10 +37,13 @@
               </el-badge>
             </div>
           </el-card>
+          <!--  【联系人】页签 -->
           <contact-card
+            :class="{'car-container-click' : item.toId === currentContactCarId}"
             v-for="(item, index) in friendShipList"
             :key="`${item.toId}_${index}`"
             :contact="item"
+            @click="concatItemCarClick(item)"
           />
         </div>
       </div>
@@ -59,10 +65,13 @@ import ContactCard from '@/components/ContactCard/ContactCard.vue';
 import { userConcatListStore } from '@/store/contactsList';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 import AddFriendDialog from '@/components/AddFriendDialog/AddFriendDialog.vue';
+import { ImFriendShipEntity, ImFriendShipEntityList } from '@/types';
 
+const router = useRouter();
 const concatListStore = userConcatListStore();
-const { friendShipList } = storeToRefs(concatListStore);
+const { friendShipList, currentContactCarId } = storeToRefs(concatListStore);
 const searchText = ref('');
 const addFriendDialogVisible = ref(false);
 const addFriendHandler = () => {
@@ -72,6 +81,22 @@ const addFriendHandler = () => {
 const friendRequestStore = useFriendRequestStore();
 const { unreadCount } = storeToRefs(friendRequestStore);
 const badgeHide = computed(() => unreadCount.value === 0);
+
+const newFriendCarClick = () => {
+  currentContactCarId.value = 'new_fiend';
+  router.replace('/main/contacts/friendRequest');
+};
+
+const concatItemCarClick = (item: ImFriendShipEntity) => {
+  currentContactCarId.value = item.toId;
+  /* 跳转好友详情页面 */
+  router.replace({
+    path: '/main/contacts/friendDetail',
+    query: {
+      userId: item.toId,
+    },
+  });
+};
 </script>
 
 <style scoped>
@@ -87,7 +112,7 @@ const badgeHide = computed(() => unreadCount.value === 0);
 .styled-contact-list {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 20px); /* 设置容器的高度为视口的高度 */
+  height: 100vh; /* 设置容器的高度为视口的高度 */
 }
 
 .contact-header {
@@ -110,5 +135,9 @@ const badgeHide = computed(() => unreadCount.value === 0);
 .el-badge-style {
   margin-top: 10px;
   margin-right: 40px;
+}
+
+.car-container-click {
+  background-color: #bfa1a33b;
 }
 </style>

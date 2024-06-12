@@ -35,11 +35,10 @@
 
 import { ref } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Discount, Plus, Search } from '@element-plus/icons-vue';
+import { Plus, Search } from '@element-plus/icons-vue';
 import ConversationCar from '@/components/ConversationCar/ConversationCar.vue';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { storeToRefs } from 'pinia';
-import MessagePage from '@/views/messagePage/messagePage.vue';
 import ChatMessage from '@/components/ChatMessage/ChatMessage.vue';
 
 const conversationSetStore = useConversationSetStore();
@@ -67,7 +66,7 @@ const searchText = ref('');
 .styled-message-list {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 20px); /* 设置容器的高度为视口的高度 */
+  height: 100vh; /* 设置容器的高度为视口的高度 */
 }
 
 .chat-header {

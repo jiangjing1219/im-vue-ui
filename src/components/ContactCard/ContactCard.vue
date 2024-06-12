@@ -1,5 +1,5 @@
 <template>
-  <el-card style="width: 99%; margin: 3px  0" shadow="hover">
+  <el-card style="width: 99%; margin: 3px  0" shadow="hover" v-bind="$attrs">
     <div class="car-container">
       <Avatar :src=profileImage status='online' size="42px" statusIconSize="8px"></Avatar>
       <div class="car-text">{{contact.nickName}}</div>

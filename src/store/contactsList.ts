@@ -9,6 +9,7 @@ import { ImFriendShipEntityList, ImFriendShipEntity } from '@/types';
 export const userConcatListStore = defineStore('contactsList', {
   state: () => ({
     friendShipList: [] as ImFriendShipEntityList,
+    currentContactCarId: 'new_fiend' as string,
   }),
   getters: {
     getFriendShipList(): ImFriendShipEntityList {

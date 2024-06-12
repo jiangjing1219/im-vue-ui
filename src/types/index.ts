@@ -104,7 +104,7 @@ export interface ImFriendShipEntity {
   // 发起方ID
   fromId?: string;
   // 接收方ID
-  toId?: string;
+  toId: string;
   // 备注
   remark?: string;
   // 状态：1正常 2删除

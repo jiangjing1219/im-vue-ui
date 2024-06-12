@@ -30,6 +30,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'friendRequest',
         name: 'friendRequest',
         component: () => import('@/views/friendRequestPage/FriendRequestPage.vue'),
+      },
+      {
+        path: 'friendDetail',
+        name: 'friendDetail',
+        component: () => import('@/views/friendDetailPage/friendDetailPage.vue'),
       }],
     }],
   },
