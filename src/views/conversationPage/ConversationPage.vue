@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <div class="content">
+    <div class="message-content">
       <chat-message/>
     </div>
   </div>
@@ -58,9 +58,10 @@ const searchText = ref('');
   background: linear-gradient(119.19deg, #FFFFFF 0%, #F8F8F8 65.34%, #FFFFFF 100%);
 }
 
-.content {
+.message-content {
   flex: 2;
   position: relative;
+  height: 100vh;
 }
 
 .styled-message-list {

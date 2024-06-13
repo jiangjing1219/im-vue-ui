@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div style="width: 100%">
       <router-view></router-view>
     </div>
   </div>
@@ -67,7 +67,7 @@ import { useFriendRequestStore } from '@/store/friendRequestList';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import AddFriendDialog from '@/components/AddFriendDialog/AddFriendDialog.vue';
-import { ImFriendShipEntity, ImFriendShipEntityList } from '@/types';
+import { ImFriendShipEntity } from '@/types';
 
 const router = useRouter();
 const concatListStore = userConcatListStore();

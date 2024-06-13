@@ -3,7 +3,7 @@
     <div style="width: 100%">
       <TitleBar/>
     </div>
-    <div style="flex: 1">
+    <div style="flex: 1; overflow-y: scroll">
       <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageRecordStore.getUserMessageRecord(conversationSetStore.currentConversation.toId)" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
     </div>
     <Footer/>
