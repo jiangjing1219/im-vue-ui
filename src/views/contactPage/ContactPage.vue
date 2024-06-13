@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div style="width: 100%">
+    <div style="flex: 1;height: 100vh">
       <router-view></router-view>
     </div>
   </div>

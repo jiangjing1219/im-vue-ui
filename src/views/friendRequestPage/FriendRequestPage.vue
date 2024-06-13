@@ -7,26 +7,29 @@
       <a-list item-layout="vertical" :pagination="pagination" :data-source="listData" class="friend-request-list">
         <template #renderItem="{ item }">
           <a-list-item key="item.title">
-            <template #actions>
-          <span v-for="{ icon, text } in actions" :key="icon">
-            <component :is="icon" style="margin-right: 8px" />
-            {{ text }}
-          </span>
-            </template>
             <template #extra>
-              <img
-                width="272"
-                alt="logo"
-                src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-              />
+              <div class="friend-request-option">
+                <el-button>接受</el-button>
+              </div>
             </template>
-            <a-list-item-meta :description="item.description">
+            <a-list-item-meta>
+              <!--  用户名称 -->
               <template #title>
-                <a :href="item.href">{{ item.title }}</a>
+                <div style="text-align: start">
+                  用户名称
+                </div>
               </template>
-              <template #avatar><a-avatar :src="item.avatar" /></template>
+              <!--  描述 -->
+              <template #description>
+                <div style="text-align: start">
+                  {{item.description}}
+                </div>
+              </template>
+              <!-- 头像  -->
+              <template #avatar>
+                <Avatar :src=profileImage status='online' size="60px" statusIconSize="0px"></Avatar>
+              </template>
             </a-list-item-meta>
-            {{ item.content }}
           </a-list-item>
         </template>
       </a-list>
@@ -35,7 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
+import profileImage from '@/components/Avatar/demo.jpg';
+import Avatar from '@/components/Avatar/Avatar.vue';
 
 const listData: Record<string, string>[] = [];
 
@@ -55,13 +59,9 @@ const pagination = {
   onChange: (page: number) => {
     console.log(page);
   },
-  pageSize: 3,
+  pageSize: 7,
 };
-const actions: Record<string, any>[] = [
-  { icon: StarOutlined, text: '156' },
-  { icon: LikeOutlined, text: '156' },
-  { icon: MessageOutlined, text: '2' },
-];
+
 </script>
 
 <style lang="css" scoped>
@@ -90,4 +90,12 @@ const actions: Record<string, any>[] = [
   height: calc(100% - 10px);
 }
 
+.ant-list-item-extra .friend-request-option {
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
