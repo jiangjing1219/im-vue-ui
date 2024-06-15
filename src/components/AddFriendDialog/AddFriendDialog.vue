@@ -205,14 +205,14 @@ const doAddFriend = (item: any) => {
 const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   // 发起请求
-  console.log('submit!', formData.userId);
-  ImSdk.addFriend(formData.userId, formData.remark, formData.addWording, '').then((res:any) => {
+  console.log('submit!', formData);
+  ImSdk.addFriend(formData.userId, formData.remark, '1', formData.addWording, '').then((res:any) => {
     console.log('发送结果', res);
     const { msg, code } = res;
     if (code === 200) {
       ElNotification({
         type: 'success',
-        message: '发送好友申请成功！',
+        message: msg,
       });
       onDialogClose();
     } else {

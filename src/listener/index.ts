@@ -1,10 +1,12 @@
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { ImFriendShipRequest } from '@/types';
+import { userConcatListStore } from '@/store/contactsList';
 
 const ListenerMap = () => {
   const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
+  const concatListStore = userConcatListStore();
   return {
     onSocketConnectEvent: (option: never, status: never, data: never) => {
       console.log(`已建立连接:${JSON.stringify(status)}`);
@@ -61,6 +63,29 @@ const ListenerMap = () => {
       console.log('收到好友请求', JSON.parse(e).data);
       const friendRequest:ImFriendShipRequest = JSON.parse(e).data;
       friendRequestStore.addFriendShipRequest(friendRequest);
+    },
+    onFriendRequestApprove: (e: any) => {
+      console.log('多端同步，其他端审核了好友申请', JSON.parse(e).data);
+      const result = JSON.parse(e).data;
+      friendRequestStore.approveFriendRequest(result.id, result.status);
+    },
+    onFriendRequestRead: (e: any) => {
+      console.log('多端同步，其他端已读好友申请', JSON.parse(e).data);
+    },
+    /**
+     * {
+     *     "toId": "312144459464705",  好友id
+     *     "sequence": 61,
+     *     "addSource": "1",
+     *     "remark": "",
+     *     "fromId": "311968820887553"  自己
+     * }
+     * @param e
+     */
+    onAddFriend: (e: any) => {
+      console.log('新增好友事件回调', JSON.parse(e).data);
+      const result = JSON.parse(e).data;
+      concatListStore.onAddFriend(JSON.parse(e).data.toId);
     },
   };
 };

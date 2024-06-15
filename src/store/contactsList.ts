@@ -29,5 +29,17 @@ export const userConcatListStore = defineStore('contactsList', {
         console.log('同步好友关系列表', error);
       });
     },
+    onAddFriend(friendId:number) {
+      window.imsdk.im.getRelation(friendId).then((res:any) => {
+        const friendShip = res.data;
+        const target = this.friendShipList.find((item) => item.toId === friendShip.toId);
+        if (target) {
+          // 如果已经存在直接替换
+          this.friendShipList = this.friendShipList.map((item) => (item.toId === friendShip.toId ? target : item));
+        } else {
+          this.friendShipList.unshift(friendShip);
+        }
+      });
+    },
   },
 });

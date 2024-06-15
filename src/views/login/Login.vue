@@ -55,12 +55,14 @@ import ListenerMap from '@/listener';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { userConcatListStore } from '@/store/contactsList';
+import { useFriendRequestStore } from '@/store/friendRequestList';
 
 const router = useRouter();
 const ImSdk = inject('ImSdk');
 const userInfoStore = useUserInfoStore();
 const conversationSet = useConversationSetStore();
 const contactsList = userConcatListStore();
+const friendRequestStore = useFriendRequestStore();
 
 if (!ImSdk) {
   ElNotification({
@@ -84,6 +86,8 @@ const initial = (userInfo) => {
   conversationSet.syncConversationSet();
   // 同步好友信息
   contactsList.syncFriendShipList();
+  // 同步好友请求
+  friendRequestStore.syncFriendShipRequest();
 };
 
 const submit = () => {
@@ -102,7 +106,7 @@ const submit = () => {
     loginType: 1,
   };
 
-  axios.post('http://127.0.0.1:8300/v1/login', requestData)
+  axios.post('http://192.168.1.3:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
         ElNotification({
@@ -116,7 +120,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://192.168.1.3:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           if (sdk) {
             ElNotification({
               title: 'Success',

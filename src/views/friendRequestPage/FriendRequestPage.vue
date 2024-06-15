@@ -4,25 +4,29 @@
       新朋友
     </div>
     <div style="flex: 1;">
-      <a-list item-layout="vertical" :pagination="pagination" :data-source="listData" class="friend-request-list">
+      <a-list item-layout="vertical" :pagination="pagination" :data-source="friendShipRequestList" class="friend-request-list">
         <template #renderItem="{ item }">
           <a-list-item key="item.title">
             <template #extra>
               <div class="friend-request-option">
-                <el-button>接受</el-button>
+                <template v-if="item.approveStatus === 0">
+                  <el-button type="primary" @click="doApproveFriendRequest(item, 1)">接受</el-button>
+                  <el-button type="primary" @click="doApproveFriendRequest(item, 2)">拒接</el-button>
+                </template>
+                <el-button type="info"  plain v-else>{{item.approveStatus === 1 ? '已接受' : '已拒绝'}}</el-button>
               </div>
             </template>
             <a-list-item-meta>
               <!--  用户名称 -->
               <template #title>
                 <div style="text-align: start">
-                  用户名称
+                  {{item.toId}}
                 </div>
               </template>
               <!--  描述 -->
               <template #description>
                 <div style="text-align: start">
-                  {{item.description}}
+                  {{item.addWording}}
                 </div>
               </template>
               <!-- 头像  -->
@@ -40,26 +44,42 @@
 <script setup lang="ts">
 import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
+import { useFriendRequestStore } from '@/store/friendRequestList';
+import { storeToRefs } from 'pinia';
+import { inject } from 'vue';
+import { ElNotification } from 'element-plus';
 
-const listData: Record<string, string>[] = [];
-
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://www.antdv.com/',
-    title: `ant design vue part ${i}`,
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    description:
-      'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-  });
-}
+const ImSdk = inject<any>('ImSdk');
+const friendRequestStore = useFriendRequestStore();
+const { friendShipRequestList } = storeToRefs(friendRequestStore);
 
 const pagination = {
   onChange: (page: number) => {
     console.log(page);
   },
   pageSize: 7,
+};
+
+const doApproveFriendRequest = (item: any, approveStatus: number) => {
+  ImSdk.approveFriendRequest(item.id, approveStatus).then((res:any) => {
+    console.log('审批结果', res);
+    if (res.code === 200) {
+      // 1、修改的本地记录的审批状态
+      friendRequestStore.approveFriendRequest(item.id, approveStatus);
+      // 2、提示审批结果
+      ElNotification({
+        title: 'Success',
+        message: '审批成功!',
+        type: 'success',
+      });
+    } else {
+      ElNotification({
+        title: 'Success',
+        message: res.message,
+        type: 'error',
+      });
+    }
+  });
 };
 
 </script>
