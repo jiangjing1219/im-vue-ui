@@ -4,7 +4,9 @@
       <TitleBar/>
     </div>
     <div style="flex: 1; overflow-y: scroll">
-      <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageRecordStore.getUserMessageRecord(conversationSetStore.currentConversation.toId)" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
+      <template v-if="messageList.length > 0">
+        <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageList" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
+      </template>
     </div>
     <Footer/>
   </div>
@@ -19,10 +21,21 @@ import { useConversationSetStore } from '@/store/conversationSet';
 import { storeToRefs } from 'pinia';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from 'dayjs';
+import { computed } from 'vue';
 
 const messageRecordStore = useMessageRecordStore();
 const conversationSetStore = useConversationSetStore();
-console.log(messageRecordStore);
+const { currentConversation } = storeToRefs(conversationSetStore);
+const messageList = computed(() => {
+  if (!currentConversation.value) {
+    return [];
+  }
+  const storeHistory = messageRecordStore.getUserMessageRecord(currentConversation.value.toId);
+  if (storeHistory) {
+    return storeHistory;
+  }
+  return [];
+});
 </script>
 
 <style scoped>
