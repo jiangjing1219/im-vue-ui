@@ -65,7 +65,7 @@
           </a-list-item>
           <a-list-item style="justify-content: center">
             <div
-              style="display: flex;width:300px;justify-content: space-around;align-items: center">
+              style="display: flex;width:300px;justify-content: space-between;align-items: center">
               <div
                 style="display: flex; flex-direction: column; justify-content: center; align-items: center"
                 class="icon-whatsapp" @click="onSendMsgClick">
@@ -100,15 +100,45 @@ import {
   VideoCameraOutlined, WhatsAppOutlined, MessageOutlined,
 } from '@ant-design/icons-vue';
 import { userConcatListStore } from '@/store/contactsList';
-import { useRoute } from 'vue-router';
-import { computed, toRef, toRefs } from 'vue';
+import { useUserInfoStore } from '@/store/userInfo';
+import { useConversationSetStore } from '@/store/conversationSet';
+import { useRoute, useRouter } from 'vue-router';
+import { computed, toRefs, inject } from 'vue';
+import { Conversation } from '@/types';
 
+const ImSdk = inject<any>('ImSdk');
 const route = useRoute();
+const router = useRouter();
 const { query } = toRefs(route);
 const userConcatList = userConcatListStore();
+const userInfoStore = useUserInfoStore();
+const conversationSet = useConversationSetStore();
 const friendShip = computed(() => userConcatList.getFriendShip(query.value.userId));
 const onSendMsgClick = () => {
-  console.log('onSendMsgClick', friendShip.value);
+  // 1、生成 单聊的会话 id
+  const conversationId = ImSdk.convertConversationId('0', userInfoStore.userId, query.value.userId);
+  // 2、判断改会话 id 是否存在
+  let conversation:Conversation | undefined = conversationSet.getConversationById(conversationId);
+  if (!conversation) {
+    // 3、如果不存在则新建一个会话对象
+    conversation = {
+      appId: userInfoStore.userInfo.appId,
+      fromId: userInfoStore.userId,
+      isMute: undefined,
+      isTop: undefined,
+      readedSequence: 0,
+      sequence: 0,
+      toId: query.value.userId,
+      conversationType: '0',
+      conversationId,
+    };
+    // 4、添加到会话列表
+    conversationSet.addConversationSet(conversation);
+  }
+  // 5、设置为当前会话
+  conversationSet.setCurrentConversation(conversationId);
+  // 6、跳转到会话详情页面
+  router.replace('/main/conversations');
 };
 
 </script>

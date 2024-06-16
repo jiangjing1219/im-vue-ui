@@ -18,6 +18,7 @@ function onSearch(value: string) {
     });
     return;
   }
+  console.log('接受方：', conversationSetStore.currentConversation.toId);
   // 发送完成之后文本置空
   inputText.value = '';
   const message = ImSdk.createP2PTextMessage(conversationSetStore.currentConversation.toId, value);

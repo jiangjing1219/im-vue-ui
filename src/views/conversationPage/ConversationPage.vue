@@ -43,7 +43,6 @@ import ChatMessage from '@/components/ChatMessage/ChatMessage.vue';
 
 const conversationSetStore = useConversationSetStore();
 const { conversationSet } = storeToRefs(conversationSetStore);
-
 const searchText = ref('');
 
 </script>

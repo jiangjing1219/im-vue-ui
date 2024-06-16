@@ -1,5 +1,5 @@
 <template>
-  <el-card style="width: 99%; margin: 3px  0" shadow="hover" :class="{'car-container-click' : targetId === currentConversation.toId}">
+  <el-card style="width: 99%; margin: 3px  0" shadow="hover" :class="{'car-container-click' : targetId === currentConversation.toId}" @click="handleClick">
     <div style="display: flex;flex-direction: column">
       <div style="display: flex">
         <Avatar :src=profileImage status='online' size="42px" statusIconSize="8px"></Avatar>
@@ -7,7 +7,7 @@
           <div style="width: 100%;display: flex;justify-content: space-between">
             <div style="display: flex;justify-content: space-between;width: 100%">
               <el-text class="mx-1" type="primary" style="align-self: flex-start" size="large">
-                {{ targetId }}</el-text>
+                {{ friendInfo?.remark || friendInfo?.nickName }}</el-text>
               <div>3小时前</div>
             </div>
           </div>
@@ -33,14 +33,15 @@
 import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 import { Promotion } from '@element-plus/icons-vue';
-import { ref } from 'vue';
 import { useConversationSetStore } from '@/store/conversationSet';
+import { userConcatListStore } from '@/store/contactsList';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 export interface Props {
   conversationId?: string
   conversationType?: string,
-  targetId:string,
+  targetId:string
 }
 
 // eslint-disable-next-line no-undef
@@ -52,10 +53,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const conversationSetStore = useConversationSetStore();
 const { currentConversation } = storeToRefs(conversationSetStore);
-const carStyle = ref({
-  width: '100%',
-  height: '100%',
-});
+const concatListStore = userConcatListStore();
+
+const handleClick = () => {
+  console.log('click', props.conversationId);
+  conversationSetStore.setCurrentConversation(props.conversationId);
+};
+
+const friendInfo = computed(() => concatListStore.getFriendShip(props.targetId));
 </script>
 
 <style scoped>

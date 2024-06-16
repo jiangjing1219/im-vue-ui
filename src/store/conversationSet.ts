@@ -29,5 +29,14 @@ export const useConversationSetStore = defineStore('conversationSet', {
         console.log('同步会话列表失败', error);
       });
     },
+    getConversationById(conversationId: string) {
+      // eslint-disable-next-line max-len
+      return this.conversationSet.find((item: Conversation) => item.conversationId === conversationId);
+    },
+    setCurrentConversation(conversationId: string) {
+      const target = this.conversationSet.find((item: Conversation) => item.conversationId === conversationId);
+      console.log('setCurrentConversation', target);
+      this.currentConversation = target || {} as Conversation;
+    },
   },
 });
