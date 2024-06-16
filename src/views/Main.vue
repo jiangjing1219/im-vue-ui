@@ -9,11 +9,12 @@
         default-active="/main/conversations"
         class="el-menu-vertical-demo"
         collapse="false"
-        :router="true"
+        :router="false"
+        @select="handleSelect"
       >
         <el-menu-item index="/main/conversations">
           <el-icon :size="20">
-            <WechatFilled />
+            <WechatFilled/>
           </el-icon>
           <template #title>聊天</template>
         </el-menu-item>
@@ -59,8 +60,14 @@ import {
   SettingOutlined,
   PoweroffOutlined,
 } from '@ant-design/icons-vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRouter } from 'vue-router';
 import profileImage from '../components/Avatar/demo.jpg';
+
+const router = useRouter();
+const handleSelect = (key: string) => {
+  // 使用 replace 方法进行路由切换，而不是 push
+  router.replace(key);
+};
 
 </script>
 

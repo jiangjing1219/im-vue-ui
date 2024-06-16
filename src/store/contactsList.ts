@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
 import { ImFriendShipEntityList, ImFriendShipEntity } from '@/types';
+import { LocationQueryValue } from 'vue-router';
 
 /**
  * 联系人列表
@@ -17,8 +18,8 @@ export const userConcatListStore = defineStore('contactsList', {
     },
   },
   actions: {
-    addFriendShip(friendShip: ImFriendShipEntity) {
-      this.friendShipList.unshift(friendShip);
+    getFriendShip(userId: string | null | LocationQueryValue[]) {
+      return this.friendShipList.find((item) => item.toId === userId);
     },
     syncFriendShipList() {
       window.imsdk.im.syncFriendshipList(0, 100).then((res:any) => {

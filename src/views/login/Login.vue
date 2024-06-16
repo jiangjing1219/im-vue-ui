@@ -128,7 +128,7 @@ const submit = () => {
               type: 'success',
             });
             initial(data.data);
-            router.push({ path: '/main/conversations' });
+            router.replace({ path: '/main/conversations' });
           } else {
             ElNotification({
               title: 'Error',
