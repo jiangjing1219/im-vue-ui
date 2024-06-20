@@ -54,14 +54,14 @@ import { useRouter } from 'vue-router';
 import ListenerMap from '@/listener';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
-import { userConcatListStore } from '@/store/contactsList';
+import { useConcatListStore } from '@/store/contactsList';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 
 const router = useRouter();
 const ImSdk = inject('ImSdk');
 const userInfoStore = useUserInfoStore();
 const conversationSet = useConversationSetStore();
-const contactsList = userConcatListStore();
+const contactsList = useConcatListStore();
 const friendRequestStore = useFriendRequestStore();
 
 if (!ImSdk) {
@@ -106,7 +106,7 @@ const submit = () => {
     loginType: 1,
   };
 
-  axios.post('http://192.168.1.3:8300/v1/login', requestData)
+  axios.post('http://175.178.14.17:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
         ElNotification({
@@ -120,7 +120,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://192.168.1.3:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://175.178.14.17:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           if (sdk) {
             ElNotification({
               title: 'Success',

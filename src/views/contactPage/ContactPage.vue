@@ -62,7 +62,7 @@ import { computed, ref } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { UserAddOutlined } from '@ant-design/icons-vue';
 import ContactCard from '@/components/ContactCard/ContactCard.vue';
-import { userConcatListStore } from '@/store/contactsList';
+import { useConcatListStore } from '@/store/contactsList';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
@@ -70,7 +70,7 @@ import AddFriendDialog from '@/components/AddFriendDialog/AddFriendDialog.vue';
 import { ImFriendShipEntity } from '@/types';
 
 const router = useRouter();
-const concatListStore = userConcatListStore();
+const concatListStore = useConcatListStore();
 const { friendShipList, currentContactCarId } = storeToRefs(concatListStore);
 const searchText = ref('');
 const addFriendDialogVisible = ref(false);

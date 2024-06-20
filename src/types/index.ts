@@ -125,6 +125,8 @@ export interface ImFriendShipEntity {
   nickName?: string;
   // 个性签名
   selfSignature?: string;
+
+  label?: string;
 }
 export type ImFriendShipEntityList = ImFriendShipEntity[];
 
@@ -147,3 +149,60 @@ export interface ImFriendShipRequest {
 }
 
 export type ImFriendShipRequestList = ImFriendShipRequest[];
+
+export class GroupMember {
+  memberId: string;
+
+  alias = '';
+
+  // 0 普通成员, 1 管理员, 2 群主
+  speakFlag = '0';
+
+  // 是否全员禁言，0 不禁言；1 全员禁言。
+  speakDate = 0;
+
+  joinType = 0;
+
+  // 0 普通成员, 1 管理员, 2 群主
+  role = 0;
+
+  constructor(memberId:string) {
+    this.memberId = memberId;
+  }
+}
+
+export interface ImGroupEntity {
+  groupId: string;
+
+  appId: number;
+
+  ownerId: string;
+
+  groupType: number;
+
+  groupName: string;
+
+  mute: number;
+
+  applyJoinType: number;
+
+  privateChat: number;
+
+  introduction: string;
+
+  notification: string;
+
+  photo?: string;
+
+  status: number;
+
+  sequence: number;
+
+  createTime: number;
+
+  extra: string;
+
+  memberList?:GroupMember[];
+}
+
+export type ImGroupList = ImGroupEntity[];

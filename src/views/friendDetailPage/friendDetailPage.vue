@@ -99,7 +99,7 @@ import Avatar from '@/components/Avatar/Avatar.vue';
 import {
   VideoCameraOutlined, WhatsAppOutlined, MessageOutlined,
 } from '@ant-design/icons-vue';
-import { userConcatListStore } from '@/store/contactsList';
+import { useConcatListStore } from '@/store/contactsList';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { useRoute, useRouter } from 'vue-router';
@@ -110,7 +110,7 @@ const ImSdk = inject<any>('ImSdk');
 const route = useRoute();
 const router = useRouter();
 const { query } = toRefs(route);
-const userConcatList = userConcatListStore();
+const userConcatList = useConcatListStore();
 const userInfoStore = useUserInfoStore();
 const conversationSet = useConversationSetStore();
 const friendShip = computed(() => userConcatList.getFriendShip(query.value.userId));

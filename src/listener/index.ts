@@ -1,12 +1,12 @@
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { ImFriendShipRequest } from '@/types';
-import { userConcatListStore } from '@/store/contactsList';
+import { useConcatListStore } from '@/store/contactsList';
 
 const ListenerMap = () => {
   const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
-  const concatListStore = userConcatListStore();
+  const concatListStore = useConcatListStore();
   return {
     onSocketConnectEvent: (option: never, status: never, data: never) => {
       console.log(`已建立连接:${JSON.stringify(status)}`);
@@ -84,8 +84,29 @@ const ListenerMap = () => {
      */
     onAddFriend: (e: any) => {
       console.log('新增好友事件回调', JSON.parse(e).data);
-      const result = JSON.parse(e).data;
       concatListStore.onAddFriend(JSON.parse(e).data.toId);
+    },
+    /**
+     * {
+     *     "groupType": 1,
+     *     "groupId": "b5af75d37af049019e0e7b49052038bb",
+     *     "photo": "",
+     *     "mute": 0,
+     *     "ownerId": "311968820887553",
+     *     "notification": "群公告",
+     *     "sequence": 1,
+     *     "groupName": "testGroupName",
+     *     "createTime": 1718807746543,
+     *     "appId": 10000,
+     *     "introduction": "群简介",
+     *     "applyJoinType": 0,
+     *     "status": 1
+     * }
+     * @param e
+     */
+    onCreateGroup: (e: any) => {
+      console.log('新建群聊事件回调', JSON.parse(e).data);
+      concatListStore.onAddGroup(JSON.parse(e).data);
     },
   };
 };

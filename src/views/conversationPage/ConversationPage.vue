@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex">
     <div class="sidebar">
-      <div class="styled-message-list"    >
+      <div class="styled-message-list">
         <div class="chat-header">
           <el-input
             v-model="searchText"
@@ -15,13 +15,17 @@
           </el-input>
           <div style="height: 36px;width: 36px; background-color: rgba(24, 28, 47, 0.2);
       border-radius:8px;display: flex;align-items: center;justify-content: center">
-            <el-icon size="26">
+            <el-icon size="26" @click="createGroupClick">
               <Plus/>
             </el-icon>
           </div>
         </div>
         <div class="chat-body">
-          <conversation-car v-for="conversation in conversationSet" :key="conversation.conversationId" :conversation-id="conversation.conversationId" :conversation-type="conversation.conversationType" :target-id="conversation.toId"/>
+          <conversation-car v-for="conversation in conversationSet"
+                            :key="conversation.conversationId"
+                            :conversation-id="conversation.conversationId"
+                            :conversation-type="conversation.conversationType"
+                            :target-id="conversation.toId"/>
         </div>
       </div>
     </div>
@@ -29,22 +33,75 @@
       <chat-message/>
     </div>
   </div>
+  <el-dialog v-model="createGroupVisible" title="创建群组" width="700px" center>
+    <el-transfer
+      v-model="groupItems"
+      filterable
+      :filter-method="filterMethod"
+      filter-placeholder="搜索"
+      :data="friendShipData"
+      :titles="['好友', '选择联系人']"
+      :props="{key: 'toId'}"
+    />
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="createGroupVisible = false">取消</el-button>
+        <el-button type="primary" @click="doCreateGroup">
+          创建
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { computed, ref, inject } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Plus, Search } from '@element-plus/icons-vue';
 import ConversationCar from '@/components/ConversationCar/ConversationCar.vue';
 import { useConversationSetStore } from '@/store/conversationSet';
+import { useConcatListStore } from '@/store/contactsList';
 import { storeToRefs } from 'pinia';
 import ChatMessage from '@/components/ChatMessage/ChatMessage.vue';
+import { GroupMember, ImFriendShipEntityList } from '@/types';
 
+const ImSdk = inject<any>('ImSdk');
 const conversationSetStore = useConversationSetStore();
 const { conversationSet } = storeToRefs(conversationSetStore);
+const concatListStore = useConcatListStore();
+const { friendShipList } = storeToRefs(concatListStore);
 const searchText = ref('');
+const createGroupVisible = ref(false);
+const createGroupClick = () => {
+  // 弹出 dialog 显示穿梭框
+  createGroupVisible.value = true;
+};
 
+const friendShipData = computed(() => friendShipList.value.map((item) => ({
+  ...item, // 先创建item的一个浅拷贝
+  label: item.remark || item.nickName, // 然后修改label属性
+})));
+const groupItems = ref<string[]>([]);
+
+const filterMethod = (query: any, item: any) => item.label.toLowerCase()
+  .includes(query.toLowerCase());
+
+const doCreateGroup = () => {
+  if (groupItems.value.length === 0) {
+    return;
+  }
+  const memberList: GroupMember[] = [];
+  groupItems.value.forEach((item) => {
+    memberList.push(new GroupMember(item));
+  });
+  ImSdk.createGroup(1, 'testGroupName', 0, 0, '群简介', '群公告', '', 100, memberList)
+    .then((res: any) => {
+      console.log('创建群组成功', res);
+    });
+  // 创建群组
+  console.log('创建群组', groupItems.value);
+};
 </script>
 
 <style>
@@ -84,6 +141,10 @@ const searchText = ref('');
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.el-dialog--center .el-dialog__body {
+  text-align: center;
 }
 
 </style>

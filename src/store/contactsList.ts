@@ -1,16 +1,17 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
-import { ImFriendShipEntityList, ImFriendShipEntity } from '@/types';
+import { ImFriendShipEntityList, ImGroupEntity, ImGroupList } from '@/types';
 import { LocationQueryValue } from 'vue-router';
 
 /**
  * 联系人列表
  */
 // eslint-disable-next-line import/prefer-default-export
-export const userConcatListStore = defineStore('contactsList', {
+export const useConcatListStore = defineStore('contactsList', {
   state: () => ({
     friendShipList: [] as ImFriendShipEntityList,
     currentContactCarId: 'new_fiend' as string,
+    imGroupList: [] as ImGroupList,
   }),
   getters: {
     getFriendShipList(): ImFriendShipEntityList {
@@ -41,6 +42,11 @@ export const userConcatListStore = defineStore('contactsList', {
           this.friendShipList.unshift(friendShip);
         }
       });
+    },
+    onAddGroup(group: ImGroupEntity) {
+      this.imGroupList.unshift(group);
+      // 获取群成员信息
+      // 添加 conversion
     },
   },
 });

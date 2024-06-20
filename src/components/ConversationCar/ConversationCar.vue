@@ -34,7 +34,7 @@ import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 import { Promotion } from '@element-plus/icons-vue';
 import { useConversationSetStore } from '@/store/conversationSet';
-import { userConcatListStore } from '@/store/contactsList';
+import { useConcatListStore } from '@/store/contactsList';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
@@ -53,7 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const conversationSetStore = useConversationSetStore();
 const { currentConversation } = storeToRefs(conversationSetStore);
-const concatListStore = userConcatListStore();
+const concatListStore = useConcatListStore();
 
 const handleClick = () => {
   console.log('click', props.conversationId);
