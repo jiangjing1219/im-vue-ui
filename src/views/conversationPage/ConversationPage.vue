@@ -64,7 +64,8 @@ import { useConversationSetStore } from '@/store/conversationSet';
 import { useConcatListStore } from '@/store/contactsList';
 import { storeToRefs } from 'pinia';
 import ChatMessage from '@/components/ChatMessage/ChatMessage.vue';
-import { GroupMember, ImFriendShipEntityList } from '@/types';
+import { GroupMember } from '@/types';
+import { ElNotification } from 'element-plus';
 
 const ImSdk = inject<any>('ImSdk');
 const conversationSetStore = useConversationSetStore();
@@ -97,7 +98,12 @@ const doCreateGroup = () => {
   });
   ImSdk.createGroup(1, 'testGroupName', 0, 0, '群简介', '群公告', '', 100, memberList)
     .then((res: any) => {
-      console.log('创建群组成功', res);
+      ElNotification({
+        title: 'Success',
+        message: '创建群组成功!',
+        type: 'success',
+      });
+      createGroupVisible.value = false;
     });
   // 创建群组
   console.log('创建群组', groupItems.value);

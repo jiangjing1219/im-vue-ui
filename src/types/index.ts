@@ -52,8 +52,31 @@ export interface MessageRecord {
   messageStatus: any,
 }
 
-export interface messageRecordMap {
+export interface MessageRecordMap {
   [key: string]: MessageRecord[]; // 同样，可以指定数组元素的具体类型
+}
+
+export interface GroupMessageRecord {
+  appId?: string;
+  messageId: any,
+  fromId: any,
+  isMe: any,
+  toId: any,
+  messageBody: any,
+  messageTime: any,
+  messageKey: any,
+  messageSequence?: any,
+  clientType: any,
+  messageRandom?: any,
+  messageType: any,
+  // 0 未发送 1 已发送 2 已送达 3 已读
+  messageStatus: any,
+  memberIds?: string[],
+  imei?:string,
+}
+
+export interface GroupMessageRecordMap {
+  [key: string]: GroupMessageRecord[]; // 同样，可以指定数组元素的具体类型
 }
 
 /**

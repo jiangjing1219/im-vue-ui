@@ -86,6 +86,8 @@ const initial = (userInfo) => {
   conversationSet.syncConversationSet();
   // 同步好友信息
   contactsList.syncFriendShipList();
+  // 同步群列表
+  contactsList.syncJoinedGroup();
   // 同步好友请求
   friendRequestStore.syncFriendShipRequest();
 };
@@ -120,7 +122,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://175.178.14.17:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           if (sdk) {
             ElNotification({
               title: 'Success',

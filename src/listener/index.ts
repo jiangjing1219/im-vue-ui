@@ -29,6 +29,9 @@ const ListenerMap = () => {
     onP2PMessageAck: (e: never) => {
       console.log(`onP2PMessageAck-消息发送成功ack ：${e}`);
     },
+    onMessageReadSync: (e: never) => {
+      console.log(`onMessageReadSync-消息已读 ：${e}`);
+    },
     onP2PMessage: (e: any) => {
       console.log('接收回调', e.data);
       const receiveMessage = JSON.parse(e).data;
@@ -107,6 +110,53 @@ const ListenerMap = () => {
     onCreateGroup: (e: any) => {
       console.log('新建群聊事件回调', JSON.parse(e).data);
       concatListStore.onAddGroup(JSON.parse(e).data);
+    },
+    /**
+     * {
+     *     "messageKey": 361972954562561,
+     *     "messageTime": 1718902954000,
+     *     "clientType": 1,
+     *     "messageBody": "{\"type\":1,\"content\":\"群聊消息1\"}",
+     *     "appId": 10000,
+     *     "groupId": "6427d8a1547c46c3a53ac559cdef7d59",
+     *     "imei": "windows_chrome_127.0.0.0",
+     *     "messageId": "zm4tdg74gi1718902954443",
+     *     "messageSequence": 1,
+     *     "fromId": "311968820887553",
+     *     "memberIds": [
+     *         "311968820887553",
+     *         "312144459464705",
+     *         "324431782084609",
+     *         "331810133245953"
+     *     ]
+     * }
+     * @param e
+     */
+    onGroupMessage: (e: any) => {
+      console.log('接收到群聊消息', JSON.parse(e).data);
+      const receiveMessage = JSON.parse(e).data;
+      receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
+      messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
+      // 直接发送已读标识
+      window.imsdk.im.senGroupMessageReadAck(receiveMessage.groupId, receiveMessage.fromId, receiveMessage.messageSequence);
+    },
+    /**
+     * {
+     *     "code": 200,
+     *     "data": {
+     *         "messageId": "zm4tdg74gi1718902954443",
+     *         "messageSequence": 1
+     *     },
+     *     "message": "success",
+     *     "ok": true
+     * }
+     * @param e
+     */
+    onGroupMessageAck: (e: any) => {
+      console.log('接收到发送群聊消息的ack，服务端接收到消息', JSON.parse(e).data);
+    },
+    onMessageReadReceipt: (e: any) => {
+      console.log('', JSON.parse(e).data);
     },
   };
 };

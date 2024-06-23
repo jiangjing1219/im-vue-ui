@@ -35,7 +35,6 @@ export const useConversationSetStore = defineStore('conversationSet', {
     },
     setCurrentConversation(conversationId: string) {
       const target = this.conversationSet.find((item: Conversation) => item.conversationId === conversationId);
-      console.log('setCurrentConversation', target);
       this.currentConversation = target || {} as Conversation;
     },
   },

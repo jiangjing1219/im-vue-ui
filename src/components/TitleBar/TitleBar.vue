@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 // eslint-disable-next-line import/no-extraneous-dependencies

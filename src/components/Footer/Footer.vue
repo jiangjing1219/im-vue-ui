@@ -3,7 +3,7 @@ import { inject, ref } from 'vue';
 import { Promotion } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useMessageRecordStore } from '@/store/messageRecord';
-import { type MessageRecord } from '@/types';
+import { GroupMessageRecord, type MessageRecord } from '@/types';
 import { useConversationSetStore } from '@/store/conversationSet';
 
 const ImSdk = inject<any>('ImSdk');
@@ -21,23 +21,49 @@ function onSearch(value: string) {
   console.log('接受方：', conversationSetStore.currentConversation.toId);
   // 发送完成之后文本置空
   inputText.value = '';
-  const message = ImSdk.createP2PTextMessage(conversationSetStore.currentConversation.toId, value);
-  // 发送单聊消息
-  ImSdk.sendP2PMessage(message);
-  const messageRecord: MessageRecord = {
-    clientType: 1,
-    messageKey: message.messageKey,
-    messageId: message.messageId,
-    messageRandom: message.messageRandom,
-    messageTime: message.messageTime,
-    fromId: message.fromId,
-    toId: message.toId,
-    messageBody: JSON.parse(message.messageBody).content,
-    messageType: 1,
-    messageStatus: 0,
-    isMe: true,
-  };
-  messageRecordStore.addMessageRecord(conversationSetStore.currentConversation.toId, messageRecord);
+  if (conversationSetStore.currentConversation.conversationType === 0) {
+    // eslint-disable-next-line max-len
+    const message = ImSdk.createP2PTextMessage(conversationSetStore.currentConversation.toId, value);
+    // 发送单聊消息
+    ImSdk.sendP2PMessage(message);
+    const messageRecord: MessageRecord = {
+      clientType: 1,
+      messageKey: message.messageKey,
+      messageId: message.messageId,
+      messageRandom: message.messageRandom,
+      messageTime: message.messageTime,
+      fromId: message.fromId,
+      toId: message.toId,
+      messageBody: JSON.parse(message.messageBody).content,
+      /* json 格式 */
+      messageType: 1,
+      messageStatus: 0,
+      isMe: true,
+    };
+    // eslint-disable-next-line max-len
+    messageRecordStore.addMessageRecord(conversationSetStore.currentConversation.toId, messageRecord);
+  } else {
+    // 构建群聊消息
+    // eslint-disable-next-line max-len
+    const message = ImSdk.createGroupTextMessage(conversationSetStore.currentConversation.toId, value);
+    ImSdk.sendGroupMessage(message);
+    const messageRecord: GroupMessageRecord = {
+      clientType: 1,
+      messageKey: message.messageKey,
+      messageId: message.messageId,
+      messageRandom: message.messageRandom,
+      messageTime: message.messageTime,
+      fromId: message.fromId,
+      toId: message.toId,
+      messageBody: JSON.parse(message.messageBody).content,
+      /* json 格式 */
+      messageType: 1,
+      messageStatus: 0,
+      isMe: true,
+    };
+    // eslint-disable-next-line max-len
+    messageRecordStore.addGroupMessageRecord(conversationSetStore.currentConversation.toId, messageRecord);
+  }
 }
 </script>
 

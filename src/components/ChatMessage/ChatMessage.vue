@@ -5,7 +5,13 @@
     </div>
     <div style="flex: 1; overflow-y: scroll">
       <template v-if="messageList.length > 0">
-        <chat-bubble :type="message.isMe ? 'mine' : 'other'" :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')" v-for="message in messageList" :key="message.messageId">{{ message.messageBody}}</chat-bubble>
+        <chat-bubble
+          :type="message.isMe ? 'mine' : 'other'"
+          :conversation-type="currentConversation.conversationType"
+          :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
+          v-for="message in messageList" :key="message.messageId">
+          {{ message.messageBody}}
+        </chat-bubble>
       </template>
     </div>
     <Footer/>
@@ -30,7 +36,12 @@ const messageList = computed(() => {
   if (!currentConversation.value) {
     return [];
   }
-  const storeHistory = messageRecordStore.getUserMessageRecord(currentConversation.value.toId);
+  let storeHistory = [];
+  if (currentConversation.value.conversationType === 1) {
+    storeHistory = messageRecordStore.getGroupMessageRecord(currentConversation.value.toId);
+  } else {
+    storeHistory = messageRecordStore.getUserMessageRecord(currentConversation.value.toId);
+  }
   if (storeHistory) {
     return storeHistory;
   }
