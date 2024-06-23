@@ -8,6 +8,12 @@ import { useUserInfoStore } from '@/store/userInfo';
 import { ElNotification } from 'element-plus';
 import { useConversationSetStore } from '@/store/conversationSet';
 
+const generateGroupName = (group: ImGroupEntity) => {
+  const { memberList } = group;
+  // 如果成员列表长度超过4，则只取前4个成员的别名
+  const aliasesToShow = memberList.slice(0, memberList.length > 5 ? 5 : memberList.length).map((item) => item.alias);
+  return aliasesToShow.join('、'); // 使用 join 方法避免手动添加最后一个分隔符的问题
+};
 /**
  * 联系人列表
  */
@@ -27,12 +33,29 @@ export const useConcatListStore = defineStore('contactsList', {
     getFriendShip(userId: string | null | LocationQueryValue[]) {
       return this.friendShipList.find((item) => item.toId === userId);
     },
+    getGroupInfo(groupId:string): ImGroupEntity | undefined {
+      return this.imGroupList.find((item) => item.groupId === groupId);
+    },
     syncFriendShipList() {
       window.imsdk.im.syncFriendshipList(0, 100)
         .then((res: any) => {
           console.log('同步好友关系列表', res.data);
           // todo 如果数据超过 100 行需要循环拉取
           this.friendShipList = res.data.dataList;
+
+          // 获取好友的在线状态
+          window.imsdk.im.queryFriendOnlineStatus().then((result: any) => {
+            console.log('拉取好友在线状态', result.data);
+            // 使用 map 方法来创建一个新数组，避免直接修改原数组中的元素
+            this.friendShipList = this.friendShipList.map((friend) => {
+              const updatedFriend = { ...friend }; // 创建朋友对象的浅拷贝
+              if (result.data[friend.toId]) {
+                console.log('@@@@@@@@@', result.data[friend.toId]);
+                updatedFriend.onlineStatus = result.data[friend.toId].onlineStatus;
+              }
+              return updatedFriend;
+            });
+          });
         })
         .catch((error: any) => {
           console.log('同步好友关系列表', error);
@@ -43,7 +66,16 @@ export const useConcatListStore = defineStore('contactsList', {
         .then((res: any) => {
           console.log('同步群列表', res.data);
           // todo 如果数据超过 100 行需要循环拉取
-          this.imGroupList = res.data.dataList;
+          const updatedGroupList = res.data.dataList.map((item:any) => {
+            if (!item.groupName) {
+              return {
+                ...item,
+                groupName: generateGroupName(item),
+              };
+            }
+            return item;
+          });
+          this.imGroupList = updatedGroupList;
         })
         .catch((error: any) => {
           console.log('同步群列表失败', error);
@@ -65,8 +97,18 @@ export const useConcatListStore = defineStore('contactsList', {
     onAddGroup(group: ImGroupEntity) {
       const userInfoStore = useUserInfoStore();
       const conversationSet = useConversationSetStore();
-      this.imGroupList.unshift(group);
       // 获取群成员信息
+      window.imsdk.im.getGroupInfo(group.groupId)
+        .then((res: any) => {
+          if (res.code === 200) {
+            const resData = res.data;
+            if (!resData.groupName) {
+              resData.groupName = generateGroupName(resData);
+            }
+            this.imGroupList.unshift(resData);
+          }
+          console.log('返回的群成员信息', res);
+        });
       // 添加 conversion
       const groupConversion: Conversation = {
         conversationId: `${userInfoStore.userId}_${group.groupId}`,
@@ -87,6 +129,25 @@ export const useConcatListStore = defineStore('contactsList', {
           type: 'success',
         });
       }
+    },
+    onlineStatusChange(userId: string, status: number) {
+      const friendShip = this.friendShipList.find((item) => item.toId === userId);
+      if (friendShip) {
+        friendShip.onlineStatus = status;
+        ElNotification({
+          title: 'SUCCESS',
+          message: `您的好友【${friendShip.remark || friendShip.nickName}】已上线！`,
+          type: 'success',
+          position: 'bottom-right',
+        });
+      }
+    },
+    getOnlineStatus(userId: string) {
+      const friendShip = this.friendShipList.find((item) => item.toId === userId);
+      if (friendShip?.onlineStatus) {
+        return friendShip?.onlineStatus;
+      }
+      return 0;
     },
   },
 });

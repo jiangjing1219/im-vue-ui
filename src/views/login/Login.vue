@@ -122,7 +122,9 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://175.178.14.17:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+          // 修改登录状态
+          userInfoStore.onlineState = 1;
           if (sdk) {
             ElNotification({
               title: 'Success',
@@ -140,6 +142,7 @@ const submit = () => {
           }
         });
       } else {
+        userInfoStore.onlineState = 0;
         ElNotification({
           title: 'Error',
           message: '业务系统登陆失败！请联系业务系统管理员1',
@@ -148,6 +151,7 @@ const submit = () => {
       }
     })
     .catch((error) => {
+      userInfoStore.onlineState = 0;
       ElNotification({
         title: 'Error',
         message: '业务系统登陆失败！请联系业务系统管理员2',

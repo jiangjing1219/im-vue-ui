@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
-import { UserInfo } from '@/types';
+import { ClientInfoList, UserInfo } from '@/types';
+import { ElNotification } from 'element-plus';
 
 /**
  * 当前登陆用户信息
@@ -9,6 +10,8 @@ import { UserInfo } from '@/types';
 export const useUserInfoStore = defineStore('userInfo', {
   state: () => ({
     userInfo: {} as UserInfo,
+    onlineState: 0 as number,
+    clientInfoList: [] as ClientInfoList,
   }),
   actions: {
     async setUserInfo(userInfo: UserInfo) {
@@ -25,6 +28,16 @@ export const useUserInfoStore = defineStore('userInfo', {
     },
     getUserInfo() {
       return this.userInfo;
+    },
+    onlineStateChange(data: any) {
+      this.clientInfoList = data.client;
+      ElNotification({
+        title: '登录通知',
+        message: `您的【${data.imei}】端账号已登录`,
+        position: 'bottom-right',
+        type: 'success',
+        duration: 5000,
+      });
     },
   },
   getters: {

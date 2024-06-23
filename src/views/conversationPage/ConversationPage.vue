@@ -96,7 +96,7 @@ const doCreateGroup = () => {
   groupItems.value.forEach((item) => {
     memberList.push(new GroupMember(item));
   });
-  ImSdk.createGroup(1, 'testGroupName', 0, 0, '群简介', '群公告', '', 100, memberList)
+  ImSdk.createGroup(1, '', 0, 0, '群简介', '群公告', '', 100, memberList)
     .then((res: any) => {
       ElNotification({
         title: 'Success',

@@ -150,6 +150,8 @@ export interface ImFriendShipEntity {
   selfSignature?: string;
 
   label?: string;
+  // 在线状态
+  onlineStatus?: number;
 }
 export type ImFriendShipEntityList = ImFriendShipEntity[];
 
@@ -225,7 +227,18 @@ export interface ImGroupEntity {
 
   extra: string;
 
-  memberList?:GroupMember[];
+  memberList:GroupMember[];
 }
 
 export type ImGroupList = ImGroupEntity[];
+
+export interface ClientInfo {
+  brokerId: number;
+  clientType: string;
+  appId: string;
+  imei: string;
+  connectState: string;
+  userId: string;
+}
+
+export type ClientInfoList = ClientInfo[];

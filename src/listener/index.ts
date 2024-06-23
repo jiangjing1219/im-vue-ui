@@ -2,11 +2,13 @@ import { useMessageRecordStore } from '@/store/messageRecord';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { ImFriendShipRequest } from '@/types';
 import { useConcatListStore } from '@/store/contactsList';
+import { useUserInfoStore } from '@/store/userInfo';
 
 const ListenerMap = () => {
   const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
   const concatListStore = useConcatListStore();
+  const userInfoStore = useUserInfoStore();
   return {
     onSocketConnectEvent: (option: never, status: never, data: never) => {
       console.log(`已建立连接:${JSON.stringify(status)}`);
@@ -156,7 +158,67 @@ const ListenerMap = () => {
       console.log('接收到发送群聊消息的ack，服务端接收到消息', JSON.parse(e).data);
     },
     onMessageReadReceipt: (e: any) => {
-      console.log('', JSON.parse(e).data);
+      console.log('接收方消息已读回执', JSON.parse(e).data);
+    },
+    /**
+     * {
+     *     "clientType": 1,
+     *     "appId": 10000,
+     *     "client": [
+     *         {
+     *             "brokerId": 1001,
+     *             "clientType": 1,
+     *             "appId": 10000,
+     *             "brokerHost": "192.168.1.3",
+     *             "imei": "windows_chrome_126.0.0.0",
+     *             "connectState": 1,
+     *             "userId": "311968820887553"
+     *         },
+     *         {
+     *             "brokerId": 1001,
+     *             "clientType": 1,
+     *             "appId": 10000,
+     *             "brokerHost": "192.168.1.3",
+     *             "imei": "windows_chrome_127.0.0.0",
+     *             "connectState": 1,
+     *             "userId": "311968820887553"
+     *         }
+     *     ],
+     *     "imei": "windows_chrome_127.0.0.0",
+     *     "userId": "311968820887553",
+     *     "status": 1
+     * }
+     * @param e
+     */
+    onUserOnlineStatusChangeSync: (e: any) => {
+      console.log('其他端在线登录', JSON.parse(e).data);
+      userInfoStore.onlineStateChange(JSON.parse(e).data);
+    },
+    /**
+     * {
+     *     "clientType": 1,
+     *     "appId": 10000,
+     *     "client": [
+     *         {
+     *             "brokerId": 1001,
+     *             "clientType": 1,
+     *             "appId": 10000,
+     *             "brokerHost": "192.168.1.3",
+     *             "imei": "windows_chrome_126.0.0.0",
+     *             "connectState": 1,
+     *             "userId": "312144459464705"
+     *         }
+     *     ],
+     *     "imei": "windows_chrome_126.0.0.0",
+     *     "userId": "312144459464705",
+     *     "status": 1
+     * }
+     * @param e
+     */
+    onUserOnlineStatusChangeNotify: (e: any) => {
+      console.log('其他用户现在状态变更通知', JSON.parse(e).data);
+      const stateInfo = JSON.parse(e).data;
+      concatListStore.onlineStatusChange(stateInfo.userId, stateInfo.status);
     },
   };
 };
