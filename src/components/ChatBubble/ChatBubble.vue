@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
+import { computed } from 'vue';
+import { useConcatListStore } from '@/store/contactsList';
 
 interface Props {
   type?: 'mine' | 'other'; // 限制 type 只能是 'mine' 或 'other'
   time?: string;
   conversationType: number;
+  targetId: string;
+  fromId: string;
 }
 
 // eslint-disable-next-line no-undef
@@ -13,13 +17,23 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'mine',
   time: '',
   conversationType: 0,
+  targetId: '',
+  fromId: '',
 });
 
 const backgroundColor = props.type === 'mine' ? '#4F9DDE' : '#F5F8FA';
 const fontColor = props.type === 'mine' ? '#FFFFFF' : '#181C2F';
 const alignSelf = props.type === 'mine' ? 'flex-end' : 'flex-start';
 const textAlign = props.type === 'mine' ? 'end' : 'start';
-console.log('@@', props.type === 'mine', alignSelf);
+const conversationStore = useConcatListStore();
+
+const nickName = computed(() => {
+  if (props.conversationType === 1) {
+    console.log('@@@@', props.targetId, props.fromId);
+    return conversationStore.getMemberNickName(props.targetId, props.fromId);
+  }
+  return '';
+});
 </script>
 
 <template>
@@ -28,7 +42,7 @@ console.log('@@', props.type === 'mine', alignSelf);
       <Avatar :src=profileImage status='online' size="40px" statusIconSize="0px"></Avatar>
     </div>
     <div class="styled-chat-bubble">
-      <div class="chat-bubble-nick-name" v-if="props.conversationType === 1">昵称</div>
+      <div class="chat-bubble-nick-name" v-if="props.conversationType === 1">{{nickName}}</div>
       <div class="bubble">
         <slot>消息内容</slot>
       </div>

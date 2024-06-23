@@ -45,12 +45,10 @@ export const useConcatListStore = defineStore('contactsList', {
 
           // 获取好友的在线状态
           window.imsdk.im.queryFriendOnlineStatus().then((result: any) => {
-            console.log('拉取好友在线状态', result.data);
             // 使用 map 方法来创建一个新数组，避免直接修改原数组中的元素
             this.friendShipList = this.friendShipList.map((friend) => {
               const updatedFriend = { ...friend }; // 创建朋友对象的浅拷贝
               if (result.data[friend.toId]) {
-                console.log('@@@@@@@@@', result.data[friend.toId]);
                 updatedFriend.onlineStatus = result.data[friend.toId].onlineStatus;
               }
               return updatedFriend;
@@ -66,7 +64,7 @@ export const useConcatListStore = defineStore('contactsList', {
         .then((res: any) => {
           console.log('同步群列表', res.data);
           // todo 如果数据超过 100 行需要循环拉取
-          const updatedGroupList = res.data.dataList.map((item:any) => {
+          this.imGroupList = res.data.dataList.map((item: any) => {
             if (!item.groupName) {
               return {
                 ...item,
@@ -75,7 +73,6 @@ export const useConcatListStore = defineStore('contactsList', {
             }
             return item;
           });
-          this.imGroupList = updatedGroupList;
         })
         .catch((error: any) => {
           console.log('同步群列表失败', error);
@@ -148,6 +145,16 @@ export const useConcatListStore = defineStore('contactsList', {
         return friendShip?.onlineStatus;
       }
       return 0;
+    },
+    getMemberNickName(groupId: string, memberId: string) {
+      const groupInfo = this.imGroupList.find((item) => item.groupId === groupId);
+      if (groupInfo) {
+        const member = groupInfo.memberList.find((item) => item.memberId === memberId);
+        if (member) {
+          return member.alias;
+        }
+      }
+      return '';
     },
   },
 });

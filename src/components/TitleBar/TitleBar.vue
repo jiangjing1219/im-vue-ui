@@ -21,7 +21,7 @@ function showUserInfo() {
 <template>
   <div class="styled-title-bar">
     <div style="display: flex;height: 64px;width: 100%;flex: 1">
-      <Avatar :src=profileImage status='online' size="64px" statusIconSize="0px" @click="showUserInfo"></Avatar>
+      <Avatar :src="profileImage" status='online' size="64px" statusIconSize="0px" @click="showUserInfo"></Avatar>
       <div style="display: flex;flex-direction: column;justify-content: space-between;margin-left: 10px">
         <div style="align-self: flex-start;margin-top: 5px">
           <el-text class="mx-1" size="large">好友昵称</el-text>
