@@ -15,6 +15,7 @@
     "dayjs": "^1.11.11",
     "element-plus": "^2.7.4",
     "pinia": "^2.1.7",
+    "pinia-plugin-persist": "^1.0.0",
     "uuid-js": "^0.7.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",

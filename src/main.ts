@@ -2,6 +2,8 @@ import { createApp } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createPinia } from 'pinia';
 // eslint-disable-next-line import/no-extraneous-dependencies
+import piniaPluginPersist from 'pinia-plugin-persist';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import ElementPlus from 'element-plus';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Antd from 'ant-design-vue';
@@ -21,6 +23,7 @@ declare global {
 
 const app = createApp(App);
 const pinia = createPinia();
+pinia.use(piniaPluginPersist);
 app.use(pinia); // 确保 Pinia 被初始化
 app.use(store); // 确保 Vuex 被初始化
 app.use(router); // 确保路由被初始化

@@ -23,28 +23,32 @@
         </div>
         <!--  显示列表  -->
         <div class="contact-body">
-        <!--  【新朋友】页签  -->
-          <el-card style="width: 99%; margin: 3px  0" shadow="hover" @click="newFriendCarClick"  :class="{'car-container-click' : 'new_fiend' === currentContactCarId}">
-            <div style="display: flex; align-items: center">
-              <div style="height: 42px;width: 42px; background-color: rgb(211 142 22 / 20%);
+          <el-scrollbar height="100%" style="width: 100%">
+            <!--  【新朋友】页签  -->
+            <el-card style="width: 99%; margin: 3px  0" shadow="hover" @click="newFriendCarClick"
+                     :class="{'car-container-click' : 'new_fiend' === currentContactCarId}">
+              <div style="display: flex; align-items: center">
+                <div style="height: 42px;width: 42px; background-color: rgb(211 142 22 / 20%);
       border-radius:8px;display: flex;align-items: center;justify-content: center">
-                <el-icon size="26">
-                  <UserAddOutlined/>
-                </el-icon>
+                  <el-icon size="26">
+                    <UserAddOutlined/>
+                  </el-icon>
+                </div>
+                <el-badge :value="unreadCount" :max="99" class="el-badge-style" :hidden="badgeHide">
+                  <div style="margin-left: 1rem; font-size: 1.2rem; padding-right: 5px">新的朋友
+                  </div>
+                </el-badge>
               </div>
-              <el-badge :value="unreadCount" :max="99" class="el-badge-style" :hidden="badgeHide">
-                <div style="margin-left: 1rem; font-size: 1.2rem; padding-right: 5px">新的朋友</div>
-              </el-badge>
-            </div>
-          </el-card>
-          <!--  【联系人】页签 -->
-          <contact-card
-            :class="{'car-container-click' : item.toId === currentContactCarId}"
-            v-for="(item, index) in friendShipList"
-            :key="`${item.toId}_${index}`"
-            :contact="item"
-            @click="concatItemCarClick(item)"
-          />
+            </el-card>
+            <!--  【联系人】页签 -->
+            <contact-card
+              :class="{'car-container-click' : item.toId === currentContactCarId}"
+              v-for="(item, index) in friendShipList"
+              :key="`${item.toId}_${index}`"
+              :contact="item"
+              @click="concatItemCarClick(item)"
+            />
+          </el-scrollbar>
         </div>
       </div>
     </div>
@@ -71,7 +75,10 @@ import { ImFriendShipEntity } from '@/types';
 
 const router = useRouter();
 const concatListStore = useConcatListStore();
-const { friendShipList, currentContactCarId } = storeToRefs(concatListStore);
+const {
+  friendShipList,
+  currentContactCarId,
+} = storeToRefs(concatListStore);
 const searchText = ref('');
 const addFriendDialogVisible = ref(false);
 const addFriendHandler = () => {
@@ -120,7 +127,7 @@ const concatItemCarClick = (item: ImFriendShipEntity) => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 16px 5px 5px 5px;
+  margin: 16px 5px 16px 5px;
 }
 
 .contact-body {

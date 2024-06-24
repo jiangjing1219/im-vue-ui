@@ -3,17 +3,19 @@
     <div style="width: 100%">
       <TitleBar/>
     </div>
-    <div style="flex: 1; overflow-y: scroll">
+    <div style="flex: 1; overflow-y: auto">
       <template v-if="messageList.length > 0">
-        <chat-bubble
-          :type="message.isMe ? 'mine' : 'other'"
-          :conversation-type="currentConversation.conversationType"
-          :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
-          :target-id="currentConversation.toId"
-          :from-id="message.fromId"
-          v-for="message in messageList" :key="message.messageId">
-          {{ message.messageBody}}
-        </chat-bubble>
+        <el-scrollbar height="100%">
+          <chat-bubble
+            :type="message.isMe ? 'mine' : 'other'"
+            :conversation-type="currentConversation.conversationType"
+            :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
+            :target-id="currentConversation.toId"
+            :from-id="message.fromId"
+            v-for="message in messageList" :key="message.messageId">
+            {{ message.messageBody }}
+          </chat-bubble>
+        </el-scrollbar>
       </template>
     </div>
     <Footer/>

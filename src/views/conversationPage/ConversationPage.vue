@@ -21,11 +21,13 @@
           </div>
         </div>
         <div class="chat-body">
-          <conversation-car v-for="conversation in conversationSet"
-                            :key="conversation.conversationId"
-                            :conversation-id="conversation.conversationId"
-                            :conversation-type="conversation.conversationType"
-                            :target-id="conversation.toId"/>
+          <el-scrollbar height="100%" style="width: 100%">
+            <conversation-car v-for="conversation in conversationSet"
+                              :key="conversation.conversationId"
+                              :conversation-id="conversation.conversationId"
+                              :conversation-type="conversation.conversationType"
+                              :target-id="conversation.toId"/>
+          </el-scrollbar>
         </div>
       </div>
     </div>
@@ -137,7 +139,7 @@ const doCreateGroup = () => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 16px 5px 5px 5px;
+  margin: 16px 5px 16px 5px;
 }
 
 .chat-body {
