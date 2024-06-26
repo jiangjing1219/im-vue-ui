@@ -157,13 +157,4 @@ export const useConcatListStore = defineStore('contactsList', {
       return '';
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: `contactsList_${window.imsdk.im.userId}`,
-        storage: localStorage,
-      },
-    ],
-  },
 });

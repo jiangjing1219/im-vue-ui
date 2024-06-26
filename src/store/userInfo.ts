@@ -45,13 +45,4 @@ export const useUserInfoStore = defineStore('userInfo', {
       return this.userInfo.userId;
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: `userInfo_${window.imsdk.im.userId}`,
-        storage: localStorage,
-      },
-    ],
-  },
 });

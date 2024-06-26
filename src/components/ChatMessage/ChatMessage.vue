@@ -5,16 +5,18 @@
     </div>
     <div style="flex: 1; overflow-y: auto">
       <template v-if="messageList.length > 0">
-        <el-scrollbar height="100%">
-          <chat-bubble
-            :type="message.isMe ? 'mine' : 'other'"
-            :conversation-type="currentConversation.conversationType"
-            :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
-            :target-id="currentConversation.toId"
-            :from-id="message.fromId"
-            v-for="message in messageList" :key="message.messageId">
-            {{ message.messageBody }}
-          </chat-bubble>
+        <el-scrollbar height="100%" ref="scrollbarRef">
+          <div ref="innerRef">
+            <chat-bubble
+              :type="message.isMe ? 'mine' : 'other'"
+              :conversation-type="currentConversation.conversationType"
+              :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
+              :target-id="currentConversation.toId"
+              :from-id="message.fromId"
+              v-for="message in messageList" :key="message.messageId">
+              {{ message.messageBody }}
+            </chat-bubble>
+          </div>
         </el-scrollbar>
       </template>
     </div>
@@ -31,25 +33,44 @@ import { useConversationSetStore } from '@/store/conversationSet';
 import { storeToRefs } from 'pinia';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from 'dayjs';
-import { computed } from 'vue';
+import {
+  computed, nextTick, onMounted, ref, watch,
+} from 'vue';
+import { ElScrollbar } from 'element-plus';
 
 const messageRecordStore = useMessageRecordStore();
 const conversationSetStore = useConversationSetStore();
 const { currentConversation } = storeToRefs(conversationSetStore);
+
+function fetchMessagesForCurrentConversation() {
+  if (currentConversation.value.conversationType === 1) {
+    return messageRecordStore.getGroupMessageRecord(currentConversation.value.toId) || [];
+  }
+  return messageRecordStore.getUserMessageRecord(currentConversation.value.toId) || [];
+}
+
 const messageList = computed(() => {
   if (!currentConversation.value) {
     return [];
   }
-  let storeHistory = [];
-  if (currentConversation.value.conversationType === 1) {
-    storeHistory = messageRecordStore.getGroupMessageRecord(currentConversation.value.toId);
-  } else {
-    storeHistory = messageRecordStore.getUserMessageRecord(currentConversation.value.toId);
-  }
-  if (storeHistory) {
-    return storeHistory;
-  }
-  return [];
+  return fetchMessagesForCurrentConversation();
+});
+const innerRef = ref<HTMLDivElement>();
+const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>();
+watch(() => messageList, () => {
+  nextTick(() => {
+    if (innerRef.value) {
+      scrollbarRef.value?.setScrollTop(innerRef.value?.clientHeight);
+    }
+  });
+}, { deep: true });
+
+onMounted(() => {
+  nextTick(() => {
+    if (innerRef.value) {
+      scrollbarRef.value?.setScrollTop(innerRef.value?.clientHeight);
+    }
+  });
 });
 </script>
 

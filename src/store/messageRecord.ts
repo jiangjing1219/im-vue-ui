@@ -39,13 +39,4 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       return this.groupMessageRecordMap[groupId];
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: `messageRecordMap_${window.imsdk.im.userId}`,
-        storage: localStorage,
-      },
-    ],
-  },
 });

@@ -107,8 +107,7 @@ const submit = () => {
     password: password.value,
     loginType: 1,
   };
-
-  axios.post('http://175.178.14.17:8300/v1/login', requestData)
+  axios.post('http://127.0.0.1:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
         ElNotification({

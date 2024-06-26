@@ -38,13 +38,4 @@ export const useConversationSetStore = defineStore('conversationSet', {
       this.currentConversation = target || {} as Conversation;
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: `conversationSet_${window.imsdk.im.userId}`,
-        storage: localStorage,
-      },
-    ],
-  },
 });

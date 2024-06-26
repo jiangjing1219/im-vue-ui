@@ -41,13 +41,4 @@ export const useFriendRequestStore = defineStore('friendRequestList', {
       }
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: `friendRequestList_${window.imsdk.im.userId}`,
-        storage: localStorage,
-      },
-    ],
-  },
 });
