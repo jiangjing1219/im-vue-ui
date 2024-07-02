@@ -22,8 +22,8 @@
           <el-icon><Promotion /></el-icon>
           <el-text class="mx-1" type="info" size="small">{{conversationId}}</el-text>
         </div>
-        <div>
-          <el-badge :value="12" class="item" offset=[5,10] ></el-badge>
+        <div v-if="unreadCount > 0">
+          <el-badge :value="props.unreadCount" class="item" offset=[5,10] ></el-badge>
         </div>
       </div>
     </div>
@@ -36,13 +36,15 @@ import Avatar from '@/components/Avatar/Avatar.vue';
 import { Promotion } from '@element-plus/icons-vue';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { useConcatListStore } from '@/store/contactsList';
+import { useMessageRecordStore } from '@/store/messageRecord';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, onUpdated } from 'vue';
 
 export interface Props {
   conversationId?: string
   conversationType?: number,
-  targetId:string
+  targetId:string,
+  unreadCount: number,
 }
 
 // eslint-disable-next-line no-undef
@@ -50,18 +52,25 @@ const props = withDefaults(defineProps<Props>(), {
   conversationId: '',
   conversationType: 0,
   targetId: '',
+  unreadCount: 0,
 });
 
 const conversationSetStore = useConversationSetStore();
 const { currentConversation } = storeToRefs(conversationSetStore);
 const concatListStore = useConcatListStore();
-
+const messageRecordStore = useMessageRecordStore();
 /**
  * 卡片点击回调，设置当前会话信息
  */
 const handleClick = () => {
-  console.log('click', props.conversationId);
+  // 设置当前会话
   conversationSetStore.setCurrentConversation(props.conversationId);
+  // 重置会话未读数为 0
+  conversationSetStore.resetP2PConversationUnreadCount(props.conversationId);
+  // 是否需要发送已读标识
+  if (props.unreadCount > 0) {
+    messageRecordStore.sendP2PMessageReadAck(props.targetId, props.conversationId);
+  }
 };
 
 const conversationTitle = computed(() => {

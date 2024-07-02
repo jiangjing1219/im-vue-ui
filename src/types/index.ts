@@ -17,7 +17,7 @@ export interface UserInfo {
 }
 
 /**
- * 会话信息
+ * 会话信息  未读消息条数
  */
 export interface Conversation {
   conversationId: any,
@@ -29,6 +29,7 @@ export interface Conversation {
   sequence: any,
   readedSequence: any,
   appId: any,
+  unreadCount: number,
 }
 
 export type ConversationSet = Conversation[];
@@ -51,6 +52,8 @@ export interface MessageRecord {
   // 0 未发送 1 已发送 2 已送达 3 已读
   messageStatus: any,
 }
+
+export type MessageRecordList = MessageRecord[];
 
 export interface MessageRecordMap {
   [key: string]: MessageRecord[]; // 同样，可以指定数组元素的具体类型

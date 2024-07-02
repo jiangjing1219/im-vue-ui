@@ -34,8 +34,31 @@ export const useConversationSetStore = defineStore('conversationSet', {
       return this.conversationSet.find((item: Conversation) => item.conversationId === conversationId);
     },
     setCurrentConversation(conversationId: string) {
-      const target = this.conversationSet.find((item: Conversation) => item.conversationId === conversationId);
+      const target = this.getConversationById(conversationId);
       this.currentConversation = target || {} as Conversation;
+    },
+    setP2PConversationUnreadCount(conversationId:string, messageSeq:number) {
+      const target = this.getConversationById(conversationId);
+      // 如果是停留在当前会话，直接未读数为0
+      if (target && this.currentConversation.conversationId === conversationId) {
+        target.unreadCount = 0;
+      } else if (target && target.readedSequence < messageSeq) {
+        // 更新会话的未读数
+        target.unreadCount = target.unreadCount ? target.unreadCount + 1 : 1;
+      }
+    },
+    resetP2PConversationUnreadCount(conversationId:string) {
+      const target = this.getConversationById(conversationId);
+      if (target) {
+        target.unreadCount = 0;
+      }
+    },
+    setP2PConversationReadSeq(conversationId:string, messageSeq:number) {
+      const target = this.getConversationById(conversationId);
+      if (target && target.readedSequence < messageSeq) {
+        console.log('更新会话的已读seq', conversationId, messageSeq);
+        target.readedSequence = messageSeq;
+      }
     },
   },
 });

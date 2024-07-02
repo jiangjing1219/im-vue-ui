@@ -26,7 +26,9 @@
                               :key="conversation.conversationId"
                               :conversation-id="conversation.conversationId"
                               :conversation-type="conversation.conversationType"
-                              :target-id="conversation.toId"/>
+                              :target-id="conversation.toId"
+                              :unread-count="conversation.unreadCount"
+            />
           </el-scrollbar>
         </div>
       </div>

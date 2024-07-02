@@ -117,6 +117,7 @@ export const useConcatListStore = defineStore('contactsList', {
         isTop: 0,
         readedSequence: 0,
         sequence: 0,
+        unreadCount: 0,
       };
       conversationSet.addConversationSet(groupConversion);
       if (userInfoStore.userId !== group.ownerId) {
