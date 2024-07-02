@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
 import { useConversationSetStore } from '@/store/conversationSet';
+import { useUserInfoStore } from '@/store/userInfo';
 import {
   type MessageRecord,
   type MessageRecordMap,
@@ -32,7 +33,7 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
         const conversationStore = useConversationSetStore();
         const conversationId = `0_${messageRecord.toId}_${messageRecord.fromId}`;
         // eslint-disable-next-line max-len
-        conversationStore.setP2PConversationUnreadCount(conversationId, messageRecord.messageSequence);
+        conversationStore.addP2PConversationUnreadCount(conversationId, messageRecord.messageSequence);
       }
     },
     addGroupMessageRecord(groupId: string, groupMessageRecord: GroupMessageRecord) {
@@ -91,40 +92,6 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       }
     },
     /**
-     * [
-     *     {
-     *         "appId": 10000,
-     *         "messageKey": 363786244456449,
-     *         "messageId": "yhpi8cq7hn1719767598913",
-     *         "messageBody": "{\"type\":1,\"content\":\"我是jiangjing\"}",
-     *         "messageTime": 1719767598000,
-     *         "extra": null,
-     *         "delFlag": 0,
-     *         "fromId": "311968820887553",
-     *         "toId": "312144459464705",
-     *         "groupId": null,
-     *         "messageSequence": 177,
-     *         "messageRandom": null,
-     *         "conversationType": 0,
-     *         "conversationId": "0_311968820887553_312144459464705"
-     *     },
-     *     {
-     *         "appId": 10000,
-     *         "messageKey": 363786261233665,
-     *         "messageId": "yibek4x861719767606744",
-     *         "messageBody": "{\"type\":1,\"content\":\"我是jiangjing2\"}",
-     *         "messageTime": 1719767606000,
-     *         "extra": null,
-     *         "delFlag": 0,
-     *         "fromId": "312144459464705",
-     *         "toId": "311968820887553",
-     *         "groupId": null,
-     *         "messageSequence": 178,
-     *         "messageRandom": null,
-     *         "conversationType": 0,
-     *         "conversationId": "0_311968820887553_312144459464705"
-     *     }
-     * ]
      * @param messageList
      */
     dispatcherOfflineMessage(messageList: any) {
@@ -181,6 +148,24 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
           });
         } else if (message.conversationType === 1) {
           // 群聊重排序
+        }
+      });
+    },
+    initConversationUnreadCount() {
+      const conversationSetStore = useConversationSetStore();
+      const userInfoStore = useUserInfoStore();
+      const userIds = Object.keys(this.messageRecordMap);
+      userIds.forEach((userId) => {
+        const p2pConversation = conversationSetStore.getConversationById(`0_${userInfoStore.userId}_${userId}`);
+        if (p2pConversation) {
+          // eslint-disable-next-line max-len
+          const unreadCount = this.messageRecordMap[userId].reduce((count, messageRecord) => (messageRecord.messageSequence > p2pConversation.readedSequence ? count + 1 : count), 0);
+          if (unreadCount > 0) {
+            // eslint-disable-next-line max-len
+            conversationSetStore.setP2PConversationUnreadCount(p2pConversation.conversationId, unreadCount);
+          }
+        } else {
+          // 创建一个单聊会话
         }
       });
     },
