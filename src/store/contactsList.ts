@@ -11,7 +11,8 @@ import { useConversationSetStore } from '@/store/conversationSet';
 const generateGroupName = (group: ImGroupEntity) => {
   const { memberList } = group;
   // 如果成员列表长度超过4，则只取前4个成员的别名
-  const aliasesToShow = memberList.slice(0, memberList.length > 5 ? 5 : memberList.length).map((item) => item.alias);
+  const aliasesToShow = memberList.slice(0, memberList.length > 5 ? 5 : memberList.length)
+    .map((item) => item.alias);
   return aliasesToShow.join('、'); // 使用 join 方法避免手动添加最后一个分隔符的问题
 };
 /**
@@ -33,7 +34,7 @@ export const useConcatListStore = defineStore('contactsList', {
     getFriendShip(userId: string | null | LocationQueryValue[]) {
       return this.friendShipList.find((item) => item.toId === userId);
     },
-    getGroupInfo(groupId:string): ImGroupEntity | undefined {
+    getGroupInfo(groupId: string): ImGroupEntity | undefined {
       return this.imGroupList.find((item) => item.groupId === groupId);
     },
     syncFriendShipList() {
@@ -42,18 +43,18 @@ export const useConcatListStore = defineStore('contactsList', {
           console.log('同步好友关系列表', res.data);
           // todo 如果数据超过 100 行需要循环拉取
           this.friendShipList = res.data.dataList;
-
           // 获取好友的在线状态
-          window.imsdk.im.queryFriendOnlineStatus().then((result: any) => {
-            // 使用 map 方法来创建一个新数组，避免直接修改原数组中的元素
-            this.friendShipList = this.friendShipList.map((friend) => {
-              const updatedFriend = { ...friend }; // 创建朋友对象的浅拷贝
-              if (result.data[friend.toId]) {
-                updatedFriend.onlineStatus = result.data[friend.toId].onlineStatus;
-              }
-              return updatedFriend;
+          window.imsdk.im.queryFriendOnlineStatus()
+            .then((result: any) => {
+              // 使用 map 方法来创建一个新数组，避免直接修改原数组中的元素
+              this.friendShipList = this.friendShipList.map((friend) => {
+                const updatedFriend = { ...friend }; // 创建朋友对象的浅拷贝
+                if (result.data[friend.toId]) {
+                  updatedFriend.onlineStatus = result.data[friend.toId].onlineStatus;
+                }
+                return updatedFriend;
+              });
             });
-          });
         })
         .catch((error: any) => {
           console.log('同步好友关系列表', error);
@@ -133,8 +134,8 @@ export const useConcatListStore = defineStore('contactsList', {
       if (friendShip) {
         friendShip.onlineStatus = status;
         ElNotification({
-          title: 'SUCCESS',
-          message: `您的好友【${friendShip.remark || friendShip.nickName}】已上线！`,
+          title: status === 1 ? 'SUCCESS' : 'Info',
+          message: `您的好友【${friendShip.remark || friendShip.nickName}】${status === 1 ? '上线' : '下线'}！`,
           type: 'success',
           position: 'bottom-right',
         });

@@ -68,14 +68,12 @@ import { Plus, Search } from '@element-plus/icons-vue';
 import ConversationCar from '@/components/ConversationCar/ConversationCar.vue';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { useConcatListStore } from '@/store/contactsList';
-import { useMessageRecordStore } from '@/store/messageRecord';
 import { storeToRefs } from 'pinia';
 import ChatMessage from '@/components/ChatMessage/ChatMessage.vue';
 import { GroupMember } from '@/types';
 import { ElNotification } from 'element-plus';
 
 const ImSdk = inject<any>('ImSdk');
-const messageRecordStore = useMessageRecordStore();
 const conversationSetStore = useConversationSetStore();
 const { conversationSet } = storeToRefs(conversationSetStore);
 const concatListStore = useConcatListStore();
@@ -116,10 +114,6 @@ const doCreateGroup = () => {
   // 创建群组
   console.log('创建群组', groupItems.value);
 };
-
-onMounted(() => {
-  messageRecordStore.initConversationUnreadCount();
-});
 </script>
 
 <style>

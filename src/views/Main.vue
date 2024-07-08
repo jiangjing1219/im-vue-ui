@@ -36,11 +36,11 @@
             </el-icon>
             <template #title>设置</template>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="5" @click="logout">
             <el-icon>
               <PoweroffOutlined/>
             </el-icon>
-            <template #title>退出</template>
+            <template #title>退出登录</template>
           </el-menu-item>
         </el-menu>
       </div>
@@ -61,14 +61,42 @@ import {
   PoweroffOutlined,
 } from '@ant-design/icons-vue';
 import { RouterView, useRouter } from 'vue-router';
+import { inject, onMounted } from 'vue';
+import { useMessageRecordStore } from '@/store/messageRecord';
+import { Action, ElMessage, ElMessageBox } from 'element-plus';
 import profileImage from '../components/Avatar/demo.jpg';
 
+const ImSdk = inject<any>('ImSdk');
+const messageRecordStore = useMessageRecordStore();
 const router = useRouter();
 const handleSelect = (key: string) => {
   // 使用 replace 方法进行路由切换，而不是 push
   router.replace(key);
 };
 
+onMounted(() => {
+  messageRecordStore.initConversationUnreadCount();
+});
+
+const logout = () => {
+  // 退出登录
+  ElMessageBox.confirm(
+    '确定要退出登录吗?',
+    '',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    },
+  )
+    .then(() => {
+      ImSdk.imLogout();
+      router.replace('/');
+    })
+    .catch(() => {
+      console.log('取消');
+    });
+};
 </script>
 
 <style lang="css" scoped>

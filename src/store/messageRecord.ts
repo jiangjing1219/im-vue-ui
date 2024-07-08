@@ -85,7 +85,6 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       const message = this.messageRecordMap[userId].slice()
         .reverse()
         .find((item) => !item.isMe);
-      console.log('sendP2PMessageReadAck,最新的一条记录', message);
       if (message) {
         // eslint-disable-next-line max-len
         window.imsdk.im.sendP2PMessageReadAck(message.messageKey, message.fromId, message.messageSequence);
@@ -159,7 +158,7 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
         const p2pConversation = conversationSetStore.getConversationById(`0_${userInfoStore.userId}_${userId}`);
         if (p2pConversation) {
           // eslint-disable-next-line max-len
-          const unreadCount = this.messageRecordMap[userId].reduce((count, messageRecord) => (messageRecord.messageSequence > p2pConversation.readedSequence ? count + 1 : count), 0);
+          const unreadCount = this.messageRecordMap[userId].reduce((count, messageRecord) => (!messageRecord.isMe && messageRecord.messageSequence > p2pConversation.readedSequence ? count + 1 : count), 0);
           if (unreadCount > 0) {
             // eslint-disable-next-line max-len
             conversationSetStore.setP2PConversationUnreadCount(p2pConversation.conversationId, unreadCount);
