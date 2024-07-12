@@ -91,6 +91,7 @@ const logout = () => {
   )
     .then(() => {
       ImSdk.imLogout();
+      localStorage.removeItem('userInfo');
       router.replace('/');
     })
     .catch(() => {

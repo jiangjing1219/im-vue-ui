@@ -25,7 +25,7 @@
         <input type="text" class="inputs user" placeholder="请输入邮箱或者账号" v-model="userName">
         <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password">
         <span class="tips">忘记密码</span>
-        <button @click="submit">登陆</button>
+        <button @click="debouncedSubmit">登陆</button>
         <div class="other-login">
           <div class="divider">
             <span class="line"></span>
@@ -47,9 +47,12 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
-import { ElMessage, ElNotification } from 'element-plus';
+import {
+  ref, inject, onMounted,
+} from 'vue';
+import { ElLoading, ElMessage, ElNotification } from 'element-plus';
 import axios from 'axios';
+import { debounce } from 'radash';
 import { useRouter } from 'vue-router';
 import ListenerMap from '@/listener';
 import { useUserInfoStore } from '@/store/userInfo';
@@ -107,6 +110,11 @@ const submit = () => {
     password: password.value,
     loginType: 1,
   };
+  const loading = ElLoading.service({
+    lock: true,
+    text: '登录中，请稍等...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
   axios.post('http://127.0.0.1:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
@@ -121,18 +129,22 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(router), (sdk) => {
           // 修改登录状态
           userInfoStore.onlineState = 1;
+          requestData.userId = userId;
+          localStorage.setItem('userInfo', JSON.stringify(requestData));
           if (sdk) {
             ElNotification({
               title: 'Success',
               message: 'WebSocket 连接建立成功!',
               type: 'success',
             });
+            loading.close();
             initial(data.data);
             router.replace({ path: '/main/conversations' });
           } else {
+            loading.close();
             ElNotification({
               title: 'Error',
               message: 'WebSocket 连接建立失败! 请联系IM服务管理员',
@@ -141,6 +153,7 @@ const submit = () => {
           }
         });
       } else {
+        loading.close();
         userInfoStore.onlineState = 0;
         ElNotification({
           title: 'Error',
@@ -150,6 +163,7 @@ const submit = () => {
       }
     })
     .catch((error) => {
+      loading.close();
       userInfoStore.onlineState = 0;
       ElNotification({
         title: 'Error',
@@ -158,6 +172,7 @@ const submit = () => {
       });
     });
 };
+const debouncedSubmit = debounce({ delay: 500 }, submit);
 </script>
 
 <style scoped lang="scss">

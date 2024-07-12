@@ -37,6 +37,7 @@ export const useFriendRequestStore = defineStore('friendRequestList', {
         const updatedRequest = { ...requestToApprove, approveStatus };
 
         // 更新数组，这里也可以选择直接替换或者根据业务逻辑决定是否需要保留原索引
+        // eslint-disable-next-line max-len
         this.friendShipRequestList = this.friendShipRequestList.map((item) => (item.id === id ? updatedRequest : item));
       }
     },

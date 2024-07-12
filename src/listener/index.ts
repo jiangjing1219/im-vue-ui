@@ -4,8 +4,9 @@ import { ImFriendShipRequest } from '@/types';
 import { useConcatListStore } from '@/store/contactsList';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
+import { Action, ElMessageBox } from 'element-plus';
 
-const ListenerMap = () => {
+const ListenerMap = (router: any) => {
   const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
   const concatListStore = useConcatListStore();
@@ -22,7 +23,16 @@ const ListenerMap = () => {
       console.log('正在重连:');
     },
     onSocketCloseEvent: () => {
-      console.log('连接关闭:');
+      console.log('连接关闭:', router, router.path);
+      if (router.currentRoute.value.fullPath !== '/login') {
+        // 直接提示或者提示加载中，判断当前路由在哪个页面
+        ElMessageBox.alert('WebSocket连接已关闭，请重新登录', '', {
+          confirmButtonText: 'OK',
+          callback: (action: Action) => {
+            router.replace({ path: '/' });
+          },
+        });
+      }
     },
     onSocketReConnectSuccessEvent: () => {
       console.log('重连成功');

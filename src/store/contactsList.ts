@@ -134,9 +134,9 @@ export const useConcatListStore = defineStore('contactsList', {
       if (friendShip) {
         friendShip.onlineStatus = status;
         ElNotification({
-          title: status === 1 ? 'SUCCESS' : 'Info',
+          title: '好友在线状态通知',
           message: `您的好友【${friendShip.remark || friendShip.nickName}】${status === 1 ? '上线' : '下线'}！`,
-          type: 'success',
+          type: status === 1 ? 'success' : 'info',
           position: 'bottom-right',
         });
       }

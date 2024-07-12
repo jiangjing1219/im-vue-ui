@@ -33,9 +33,9 @@ export const useUserInfoStore = defineStore('userInfo', {
       this.clientInfoList = data.client;
       ElNotification({
         title: '登录通知',
-        message: `您的【${data.imei}】端账号已登录`,
+        message: `您的【${data.imei}】端账号已${data.status === 1 ? '登录' : '登出'}`,
         position: 'bottom-right',
-        type: 'success',
+        type: data.status === 1 ? 'success' : 'info',
         duration: 5000,
       });
     },
