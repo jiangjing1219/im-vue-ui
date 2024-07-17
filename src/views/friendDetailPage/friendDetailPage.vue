@@ -8,7 +8,7 @@
         <a-list item-layout="horizontal" size="middle">
           <a-list-item style="justify-content: center">
             <div style="display: flex; width: 300px">
-              <Avatar :src=profileImage status='online' size="90px" statusIconSize="0px"></Avatar>
+              <Avatar :src='avatarSrc' status='online' size="90px" statusIconSize="0px"></Avatar>
               <div style="display: flex; flex-direction: column;margin-left: 10px">
                 <el-form
                   label-position="left"
@@ -66,20 +66,17 @@
           <a-list-item style="justify-content: center">
             <div
               style="display: flex;width:300px;justify-content: space-between;align-items: center">
-              <div
-                style="display: flex; flex-direction: column; justify-content: center; align-items: center"
+              <div style="display: flex; flex-direction: column; justify-content: center; align-items: center"
                 class="icon-whatsapp" @click="onSendMsgClick">
                 <MessageOutlined style="fontSize:32px"/>
                 <span style="margin-top: 5px">发消息</span>
               </div>
-              <div
-                style="display: flex; flex-direction: column; justify-content: center; align-items: center"
+              <div style="display: flex; flex-direction: column; justify-content: center; align-items: center"
                 class="icon-whatsapp">
                 <WhatsAppOutlined style="fontSize:32px" class="icon-whatsapp"/>
                 <span style="margin-top: 5px">语音聊天</span>
               </div>
-              <div
-                style="display: flex; flex-direction: column; justify-content: center; align-items: center"
+              <div style="display: flex; flex-direction: column; justify-content: center; align-items: center"
                 class="icon-whatsapp">
                 <VideoCameraOutlined style="fontSize:32px" class="icon-whatsapp"/>
                 <span style="margin-top: 5px">视频聊天</span>
@@ -93,7 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -118,7 +114,7 @@ const onSendMsgClick = () => {
   // 1、生成 单聊的会话 id
   const conversationId = ImSdk.convertConversationId('0', userInfoStore.userId, query.value.userId);
   // 2、判断改会话 id 是否存在
-  let conversation:Conversation | undefined = conversationSet.getConversationById(conversationId);
+  let conversation:any = conversationSet.getConversationById(conversationId);
   if (!conversation) {
     // 3、如果不存在则新建一个会话对象
     conversation = {
@@ -129,7 +125,7 @@ const onSendMsgClick = () => {
       readedSequence: 0,
       sequence: 0,
       toId: query.value.userId,
-      conversationType: '0',
+      conversationType: 0,
       conversationId,
     };
     // 4、添加到会话列表
@@ -141,6 +137,8 @@ const onSendMsgClick = () => {
   router.replace('/main/conversations');
 };
 
+// 使用计算属性
+const avatarSrc = computed(() => `https://robohash.org/${friendShip.value?.nickName}?set=set4&size=200x200`);
 </script>
 
 <style scoped>

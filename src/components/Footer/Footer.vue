@@ -11,6 +11,7 @@ const inputText = ref('');
 const messageRecordStore = useMessageRecordStore();
 const conversationSetStore = useConversationSetStore();
 function onSearch(value: string) {
+  console.log('send', conversationSetStore.currentConversation.conversationType);
   if (!value) {
     ElMessage({
       message: '不能发送空白消息！',
@@ -22,9 +23,11 @@ function onSearch(value: string) {
   // 发送完成之后文本置空
   inputText.value = '';
   if (conversationSetStore.currentConversation.conversationType === 0) {
+    debugger;
     // eslint-disable-next-line max-len
     const message = ImSdk.createP2PTextMessage(conversationSetStore.currentConversation.toId, value);
     // 发送单聊消息
+    console.log('发送单聊消息');
     ImSdk.sendP2PMessage(message);
     const messageRecord: MessageRecord = {
       clientType: 1,
@@ -43,6 +46,8 @@ function onSearch(value: string) {
     // eslint-disable-next-line max-len
     messageRecordStore.addMessageRecord(conversationSetStore.currentConversation.toId, messageRecord);
   } else {
+    console.log('发送群聊消息');
+    debugger;
     // 构建群聊消息
     // eslint-disable-next-line max-len
     const message = ImSdk.createGroupTextMessage(conversationSetStore.currentConversation.toId, value);

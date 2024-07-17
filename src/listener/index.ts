@@ -6,7 +6,7 @@ import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { Action, ElMessageBox } from 'element-plus';
 
-const ListenerMap = (router: any) => {
+const ListenerMap = () => {
   const friendRequestStore = useFriendRequestStore();
   const messageRecordStore = useMessageRecordStore();
   const concatListStore = useConcatListStore();
@@ -17,19 +17,20 @@ const ListenerMap = (router: any) => {
       console.log(`已建立连接:${JSON.stringify(status)}`);
     },
     onSocketErrorEvent: (error: never) => {
-      console.log('连接出现错误:', error);
+      localStorage.removeItem('userInfo');
+      window.location.assign('/login');
     },
     onSocketReConnectEvent: () => {
       console.log('正在重连:');
     },
     onSocketCloseEvent: () => {
-      console.log('连接关闭:', router, router.path);
-      if (router.currentRoute.value.fullPath !== '/login') {
+      if (window.location.pathname !== '/login') {
         // 直接提示或者提示加载中，判断当前路由在哪个页面
+        localStorage.removeItem('userInfo');
         ElMessageBox.alert('WebSocket连接已关闭，请重新登录', '', {
           confirmButtonText: 'OK',
           callback: (action: Action) => {
-            router.replace({ path: '/' });
+            window.location.assign('/login');
           },
         });
       }

@@ -2,7 +2,7 @@
   <el-card style="width: 99%; margin: 3px  0" shadow="hover" :class="{'car-container-click' : targetId === currentConversation.toId}" @click="handleClick">
     <div style="display: flex;flex-direction: column">
       <div style="display: flex">
-        <Avatar :src=profileImage :status='onlineStatus' size="42px" :statusIconSize="props.conversationType === 0 ? '10px' : '0'"></Avatar>
+        <Avatar :src='avatarSrc' :status='onlineStatus' size="42px" :statusIconSize="props.conversationType === 0 ? '10px' : '0'"></Avatar>
         <div style="display: flex;flex-direction: column;justify-content: space-between;width: 100%;margin-left: 12px">
           <div style="width: 100%;display: flex;justify-content: space-between">
             <div style="display: flex;justify-content: space-between;width: 100%">
@@ -13,7 +13,9 @@
             </div>
           </div>
           <div style="align-self: flex-start">
-            <el-text class="mx-1" type="info" size="small" v-if="props.conversationType === 0">在线</el-text>
+            <el-text class="mx-1" type="info" size="small" v-if="props.conversationType === 0">
+              {{onlineStatus === 'online' ? '在线' : '离线'}}
+            </el-text>
           </div>
         </div>
       </div>
@@ -31,14 +33,13 @@
 </template>
 
 <script setup lang="ts">
-import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 import { Promotion } from '@element-plus/icons-vue';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { useConcatListStore } from '@/store/contactsList';
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { storeToRefs } from 'pinia';
-import { computed, onUpdated } from 'vue';
+import { computed } from 'vue';
 
 export interface Props {
   conversationId?: string
@@ -79,6 +80,17 @@ const conversationTitle = computed(() => {
     return friendInfo?.remark || friendInfo?.nickName;
   }
   return concatListStore.getGroupInfo(props.targetId)?.groupName;
+});
+// 使用计算属性
+const avatarSrc = computed(() => {
+  let name: string | undefined = '';
+  if (props.conversationType === 0) {
+    const friendInfo = concatListStore.getFriendShip(props.targetId);
+    name = friendInfo?.nickName;
+  } else {
+    name = concatListStore.getGroupInfo(props.targetId)?.groupName;
+  }
+  return `https://robohash.org/${name}?set=set4&size=200x200`;
 });
 
 const onlineStatus = computed(() => {

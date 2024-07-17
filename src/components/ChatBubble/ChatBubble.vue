@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 import { computed } from 'vue';
 import { useConcatListStore } from '@/store/contactsList';
+import { useUserInfoStore } from '@/store/userInfo';
 
 interface Props {
   type?: 'mine' | 'other'; // 限制 type 只能是 'mine' 或 'other'
@@ -26,20 +26,33 @@ const fontColor = props.type === 'mine' ? '#FFFFFF' : '#181C2F';
 const alignSelf = props.type === 'mine' ? 'flex-end' : 'flex-start';
 const textAlign = props.type === 'mine' ? 'end' : 'start';
 const conversationStore = useConcatListStore();
+const userInfoStore = useUserInfoStore();
 
 const nickName = computed(() => {
   if (props.conversationType === 1) {
-    console.log('@@@@', props.targetId, props.fromId);
     return conversationStore.getMemberNickName(props.targetId, props.fromId);
   }
   return '';
+});
+
+// 使用计算属性
+const avatarSrc = computed(() => {
+  let name:any = '';
+  if (props.type === 'mine') {
+    name = userInfoStore.userInfo.nickName;
+  } else if (props.conversationType === 1) {
+    name = conversationStore.getMemberNickName(props.targetId, props.fromId);
+  } else {
+    name = conversationStore.getFriendShip(props.targetId)?.nickName;
+  }
+  return `https://robohash.org/${name}?set=set4&size=200x200`;
 });
 </script>
 
 <template>
   <div class="chat-bubble-container">
     <div v-if="props.type !== 'mine'" style="margin: 12px">
-      <Avatar :src=profileImage status='online' size="40px" statusIconSize="0px"></Avatar>
+      <Avatar :src='avatarSrc' status='online' size="40px" statusIconSize="0px"></Avatar>
     </div>
     <div class="styled-chat-bubble">
       <div class="chat-bubble-nick-name" v-if="props.conversationType === 1">{{nickName}}</div>
@@ -51,7 +64,7 @@ const nickName = computed(() => {
       </div>
     </div>
     <div v-if="props.type === 'mine'" style="margin: 12px">
-      <Avatar :src=profileImage status='online' size="40px" statusIconSize="0px"></Avatar>
+      <Avatar :src='avatarSrc' status='online' size="40px" statusIconSize="0px"></Avatar>
     </div>
   </div>
 </template>

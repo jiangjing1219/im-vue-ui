@@ -91,7 +91,8 @@ router.beforeEach(async (to, from, next) => {
             imUserSign,
             userId,
           } = result.data.data;
-          window.imsdk.im.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(router), (sdk: any) => {
+          window.imsdk.im.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk: any) => {
+            console.log('初始化成功', sdk);
             const userInfoStore = useUserInfoStore();
             // 修改登录状态
             userInfoStore.onlineState = 1;

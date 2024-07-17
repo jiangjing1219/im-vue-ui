@@ -59,7 +59,7 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
     onP2PMessageAck(messageAck: any) {
       // 设置 message 的 key 和 seq
       // eslint-disable-next-line max-len
-      this.messageRecordMap[messageAck.toId] = this.messageRecordMap[messageAck.toId].map((messageRecord) => {
+      this.messageRecordMap[messageAck.toId] = this.messageRecordMap[messageAck.toId]?.map((messageRecord) => {
         if (messageRecord.messageId === messageAck.messageId) {
           return {
             ...messageRecord,

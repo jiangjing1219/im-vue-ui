@@ -26,7 +26,7 @@ export const useFriendRequestStore = defineStore('friendRequestList', {
       window.imsdk.im.getFriendRequest().then((res:any) => {
         console.log('同步好友请求列表', res.data);
         // todo 如果数据超过 100 行需要循环拉取
-        this.friendShipRequestList = res.data;
+        this.friendShipRequestList = res.data || [];
       });
     },
     approveFriendRequest(id:number, approveStatus:number) {

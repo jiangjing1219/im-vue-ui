@@ -14,6 +14,7 @@ export interface UserInfo {
   userType?: any,
   imUserSign?: any,
   userSign?: any,
+  nickName?:string,
 }
 
 /**
@@ -21,7 +22,7 @@ export interface UserInfo {
  */
 export interface Conversation {
   conversationId: any,
-  conversationType: any,
+  conversationType: number,
   fromId: any,
   toId: any,
   isMute: any,

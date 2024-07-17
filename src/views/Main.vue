@@ -3,7 +3,7 @@
     <!--  左侧菜单面板  -->
     <div class="nav">
       <div style="margin: 20px 0 30px 0">
-        <Avatar :src=profileImage status='online' size="60px" statusIconSize="10px"></Avatar>
+        <Avatar :src='avatarSrc' status='online' size="60px" statusIconSize="10px"></Avatar>
       </div>
       <el-menu
         default-active="/main/conversations"
@@ -61,18 +61,22 @@ import {
   PoweroffOutlined,
 } from '@ant-design/icons-vue';
 import { RouterView, useRouter } from 'vue-router';
-import { inject, onMounted } from 'vue';
+import { computed, inject, onMounted } from 'vue';
 import { useMessageRecordStore } from '@/store/messageRecord';
-import { Action, ElMessage, ElMessageBox } from 'element-plus';
-import profileImage from '../components/Avatar/demo.jpg';
+import { useUserInfoStore } from '@/store/userInfo';
+import { ElMessageBox } from 'element-plus';
 
 const ImSdk = inject<any>('ImSdk');
 const messageRecordStore = useMessageRecordStore();
+const userInfoStore = useUserInfoStore();
 const router = useRouter();
 const handleSelect = (key: string) => {
   // 使用 replace 方法进行路由切换，而不是 push
   router.replace(key);
 };
+
+// 使用计算属性
+const avatarSrc = computed(() => `https://robohash.org/${userInfoStore.userInfo.nickName}?set=set4&size=200x200`);
 
 onMounted(() => {
   messageRecordStore.initConversationUnreadCount();

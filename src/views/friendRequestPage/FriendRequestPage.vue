@@ -4,7 +4,10 @@
       新朋友
     </div>
     <div style="flex: 1;">
-      <a-list item-layout="vertical" :pagination="pagination" :data-source="friendShipRequestList" class="friend-request-list">
+      <a-list item-layout="vertical"
+              :pagination="pagination"
+              :data-source="friendShipRequestList"
+              class="friend-request-list">
         <template #renderItem="{ item }">
           <a-list-item key="item.title">
             <template #extra>
@@ -31,7 +34,9 @@
               </template>
               <!-- 头像  -->
               <template #avatar>
-                <Avatar :src=profileImage status='online' size="60px" statusIconSize="0px"></Avatar>
+                <Avatar :src='getAvatarSrc(item.remark)'
+                        status='online' size="60px"
+                        statusIconSize="0px"></Avatar>
               </template>
             </a-list-item-meta>
           </a-list-item>
@@ -42,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
 import { useFriendRequestStore } from '@/store/friendRequestList';
 import { storeToRefs } from 'pinia';
@@ -82,6 +86,8 @@ const doApproveFriendRequest = (item: any, approveStatus: number) => {
   });
 };
 
+// 使用计算属性
+const getAvatarSrc = (name:string) => `https://robohash.org/${name}?set=set4&size=200x200`;
 </script>
 
 <style lang="css" scoped>

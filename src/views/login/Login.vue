@@ -48,7 +48,7 @@
 
 <script setup>
 import {
-  ref, inject, onMounted,
+  ref, inject,
 } from 'vue';
 import { ElLoading, ElMessage, ElNotification } from 'element-plus';
 import axios from 'axios';
@@ -129,7 +129,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(router), (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           // 修改登录状态
           userInfoStore.onlineState = 1;
           requestData.userId = userId;

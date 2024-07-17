@@ -1,7 +1,7 @@
 <template>
   <el-card style="width: 99%; margin: 3px  0" shadow="hover" v-bind="$attrs">
     <div class="car-container">
-      <Avatar :src=profileImage status='online' size="42px" statusIconSize="8px"></Avatar>
+      <Avatar :src='avatarSrc' status='online' size="42px" statusIconSize="8px"></Avatar>
       <div class="car-text">{{contact.remark || contact.nickName}}</div>
     </div>
   </el-card>
@@ -10,16 +10,18 @@
 <script setup lang="ts">
 
 import { ImFriendShipEntity } from '@/types';
-import profileImage from '@/components/Avatar/demo.jpg';
 import Avatar from '@/components/Avatar/Avatar.vue';
+import { computed } from 'vue';
 
 interface Props {
   contact: ImFriendShipEntity
 }
 
 // eslint-disable-next-line no-undef
-defineProps<Props>();
+const props = defineProps<Props>();
 
+// 使用计算属性
+const avatarSrc = computed(() => `https://robohash.org/${props.contact.nickName}?set=set4&size=200x200`);
 </script>
 
 <style scoped>
