@@ -42,7 +42,7 @@ export const useConversationSetStore = defineStore('conversationSet', {
     addP2PConversationUnreadCount(conversationId: string, messageSeq: number) {
       const target = this.getConversationById(conversationId);
       // 如果是停留在当前会话，直接未读数为0
-      if (target && this.currentConversation.conversationId === conversationId) {
+      if (target && this.currentConversation?.conversationId === conversationId) {
         target.unreadCount = 0;
       } else if (target && target.readedSequence < messageSeq) {
         // 更新会话的未读数

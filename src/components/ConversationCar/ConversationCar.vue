@@ -1,5 +1,5 @@
 <template>
-  <el-card style="width: 99%; margin: 3px  0" shadow="hover" :class="{'car-container-click' : targetId === currentConversation.toId}" @click="handleClick">
+  <el-card style="width: 99%; margin: 3px  0" shadow="hover" :class="{'car-container-click' : targetId === currentConversation?.toId}" @click="handleClick">
     <div style="display: flex;flex-direction: column">
       <div style="display: flex">
         <Avatar :src='avatarSrc' :status='onlineStatus' size="42px" :statusIconSize="props.conversationType === 0 ? '10px' : '0'"></Avatar>
@@ -13,16 +13,16 @@
             </div>
           </div>
           <div style="align-self: flex-start">
-            <el-text class="mx-1" type="info" size="small" v-if="props.conversationType === 0">
+            <el-text class="mx-1" :type="onlineStatus === 'online' ? 'success' : 'info'" size="small" v-if="props.conversationType === 0">
               {{onlineStatus === 'online' ? '在线' : '离线'}}
             </el-text>
           </div>
         </div>
       </div>
       <div style="display: flex;justify-content: space-between; padding-top: 26px">
-        <div>
-          <el-icon><Promotion /></el-icon>
-          <el-text class="mx-1" type="info" size="small">{{conversationId}}</el-text>
+        <div style="display: flex;" v-if="lastMessage">
+          <el-icon style="margin-right: 5px" :class="{'rotate-180': !lastMessage?.isMe}"><Promotion /></el-icon>
+          <el-text type="info" size="large" line-clamp="1">{{lastMessage.messageBody}}</el-text>
         </div>
         <div v-if="unreadCount > 0">
           <el-badge :value="props.unreadCount" class="item" offset=[5,10] ></el-badge>
@@ -100,10 +100,20 @@ const onlineStatus = computed(() => {
   }
   return 'offline';
 });
+
+const lastMessage = computed(() => {
+  const message = messageRecordStore.getLastMessage(props.targetId, props.conversationType);
+  console.log('mesg', message);
+  return message;
+});
 </script>
 
 <style scoped>
 .car-container-click {
   background-color: #efece8;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
 }
 </style>

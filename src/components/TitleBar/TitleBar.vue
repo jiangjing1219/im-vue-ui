@@ -26,10 +26,10 @@ function showUserInfo() {
 // 使用计算属性
 const avatarSrc = computed(() => {
   let name: string | undefined = '';
-  if (currentConversation.value.conversationType === 0) {
+  if (currentConversation.value?.conversationType === 0) {
     const friendInfo = concatListStore.getFriendShip(currentConversation.value.toId);
     name = friendInfo?.nickName;
-  } else {
+  } else if (currentConversation.value?.conversationType === 1) {
     name = concatListStore.getGroupInfo(currentConversation.value.toId)?.groupName;
   }
   return `https://robohash.org/${name}?set=set4&size=200x200`;
@@ -37,10 +37,10 @@ const avatarSrc = computed(() => {
 
 const nickName = computed(() => {
   let name: string | undefined = '';
-  if (currentConversation.value.conversationType === 0) {
+  if (currentConversation.value?.conversationType === 0) {
     const friendInfo = concatListStore.getFriendShip(currentConversation.value.toId);
     name = friendInfo?.remark || friendInfo?.nickName;
-  } else {
+  } else if (currentConversation.value?.conversationType === 1) {
     name = concatListStore.getGroupInfo(currentConversation.value.toId)?.groupName;
   }
   return name;
@@ -58,7 +58,7 @@ const onlineStatus = computed(() => concatListStore.getOnlineStatus(currentConve
         <div style="align-self: flex-start;margin-top: 5px">
           <el-text class="mx-1" size="large">{{nickName}}</el-text>
         </div>
-        <div v-if="currentConversation.conversationType === 0">
+        <div v-if="currentConversation?.conversationType === 0">
           {{`${onlineStatus === 1? '在线' : '离线'} · 最后阅读 · 三小时前`}}
         </div>
       </div>

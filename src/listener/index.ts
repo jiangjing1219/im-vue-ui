@@ -1,6 +1,6 @@
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { useFriendRequestStore } from '@/store/friendRequestList';
-import { ImFriendShipRequest } from '@/types';
+import { Conversation, ImFriendShipRequest } from '@/types';
 import { useConcatListStore } from '@/store/contactsList';
 import { useUserInfoStore } from '@/store/userInfo';
 import { useConversationSetStore } from '@/store/conversationSet';
@@ -131,10 +131,27 @@ const ListenerMap = () => {
         messageSequence: receiveMessage.messageSequence,
         messageType: 1,
       };
+      const conversationId = `0_${message.toId}_${message.fromId}`;
+      // 判断该会话是否存在，不存在直接创建会话
+      if (!conversationSetStore.getConversationById(conversationId)) {
+        // 创建一个单聊会话
+        const conversation: Conversation = {
+          conversationId,
+          conversationType: 0,
+          appId: 10000,
+          fromId: message.toId,
+          isMute: 0,
+          isTop: 0,
+          readedSequence: 0,
+          unreadCount: 1,
+          sequence: 0,
+          toId: message.fromId,
+        };
+        conversationSetStore.addConversationSet(conversation);
+      }
       messageRecordStore.addMessageRecord(message.fromId, message);
       console.log('onP2PMessage接收到消息', message.messageId, message.messageKey);
       // 事件发布   fromId   toID - 自己   会话id
-      const conversationId = `0_${message.toId}_${message.fromId}`;
       if (conversationSetStore.currentConversation.conversationId === conversationId) {
         // 直接回复已读 ack, 后续修改为点击进入聊天框， 如果当前页面是停留在当前好友的聊天页面直接回复已读
         window.imsdk.im.sendP2PMessageReadAck(message.messageKey, message.fromId, message.messageSequence);
@@ -223,6 +240,24 @@ const ListenerMap = () => {
       const receiveMessage = JSON.parse(e).data;
       receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
       messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
+      const conversationId = `0_${receiveMessage.toId}_${receiveMessage.fromId}`;
+      // 判断该会话是否存在，不存在直接创建会话
+      if (!conversationSetStore.getConversationById(conversationId)) {
+        // 创建一个单聊会话
+        const conversation: Conversation = {
+          conversationId,
+          conversationType: 1,
+          appId: 10000,
+          fromId: userInfoStore.userId,
+          isMute: 0,
+          isTop: 0,
+          readedSequence: 0,
+          unreadCount: 1,
+          sequence: 0,
+          toId: receiveMessage.groupId,
+        };
+        conversationSetStore.addConversationSet(conversation);
+      }
       // 直接发送已读标识
       window.imsdk.im.senGroupMessageReadAck(receiveMessage.groupId, receiveMessage.fromId, receiveMessage.messageSequence);
     },

@@ -6,7 +6,7 @@ import {
   type MessageRecord,
   type MessageRecordMap,
   type GroupMessageRecordMap,
-  GroupMessageRecord,
+  GroupMessageRecord, Conversation,
 } from '@/types';
 
 /**
@@ -82,7 +82,7 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       this.messageRecordMap[userId].sort((recordA, recordB) => recordA.messageSequence - recordB.messageSequence);
     },
     sendP2PMessageReadAck(userId: string, conversationId: string) {
-      const message = this.messageRecordMap[userId].slice()
+      const message = this.messageRecordMap[userId]?.slice()
         .reverse()
         .find((item) => !item.isMe);
       if (message) {
@@ -156,17 +156,37 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       const userIds = Object.keys(this.messageRecordMap);
       userIds.forEach((userId) => {
         const p2pConversation = conversationSetStore.getConversationById(`0_${userInfoStore.userId}_${userId}`);
+        // eslint-disable-next-line max-len
+        const unreadCount = this.messageRecordMap[userId].reduce((count, messageRecord) => (!messageRecord.isMe && messageRecord.messageSequence > p2pConversation?.readedSequence ? count + 1 : count), 0);
         if (p2pConversation) {
           // eslint-disable-next-line max-len
-          const unreadCount = this.messageRecordMap[userId].reduce((count, messageRecord) => (!messageRecord.isMe && messageRecord.messageSequence > p2pConversation.readedSequence ? count + 1 : count), 0);
           if (unreadCount > 0) {
             // eslint-disable-next-line max-len
             conversationSetStore.setP2PConversationUnreadCount(p2pConversation.conversationId, unreadCount);
           }
         } else {
           // 创建一个单聊会话
+          const conversation: Conversation = {
+            conversationId: `0_${userInfoStore.userId}_${userId}`,
+            conversationType: 0,
+            appId: 10000,
+            fromId: userInfoStore.userId,
+            isMute: 0,
+            isTop: 0,
+            readedSequence: 0,
+            unreadCount,
+            sequence: 0,
+            toId: userId,
+          };
+          conversationSetStore.addConversationSet(conversation);
         }
       });
+    },
+    getLastMessage(userId: string, conversationType: number) {
+      if (conversationType === 0) {
+        return this.messageRecordMap[userId]?.slice(-1)[0];
+      }
+      return this.groupMessageRecordMap[userId]?.slice(-1)[0];
     },
   },
 });

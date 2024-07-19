@@ -45,7 +45,7 @@
                   <div style="text-align: left">{{ item.nickName }}</div>
                 </template>
                 <template #avatar>
-                  <a-avatar :src="item.picture"/>
+                  <a-avatar :src="getAvatarSrc(item.nickName)"/>
                 </template>
                 <template #description>
                   <div style="text-align: left">{{ item.selfSignature }}</div>
@@ -229,6 +229,9 @@ const submit = async (formEl: FormInstance | undefined) => {
 const cancel = (formEl: FormInstance | undefined) => {
   doAddDialogVisible.value = false;
 };
+
+// 使用计算属性
+const getAvatarSrc = (name:string) => `https://robohash.org/${name}?set=set4&size=200x200`;
 </script>
 
 <style scoped>
