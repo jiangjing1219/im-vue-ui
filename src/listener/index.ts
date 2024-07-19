@@ -240,7 +240,7 @@ const ListenerMap = () => {
       const receiveMessage = JSON.parse(e).data;
       receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
       messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
-      const conversationId = `0_${receiveMessage.toId}_${receiveMessage.fromId}`;
+      const conversationId = `1_${userInfoStore.userId}_${receiveMessage.groupId}`;
       // 判断该会话是否存在，不存在直接创建会话
       if (!conversationSetStore.getConversationById(conversationId)) {
         // 创建一个单聊会话
