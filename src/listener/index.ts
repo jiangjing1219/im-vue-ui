@@ -152,7 +152,7 @@ const ListenerMap = () => {
       messageRecordStore.addMessageRecord(message.fromId, message);
       console.log('onP2PMessage接收到消息', message.messageId, message.messageKey);
       // 事件发布   fromId   toID - 自己   会话id
-      if (conversationSetStore.currentConversation.conversationId === conversationId) {
+      if (conversationSetStore.currentConversation?.conversationId === conversationId) {
         // 直接回复已读 ack, 后续修改为点击进入聊天框， 如果当前页面是停留在当前好友的聊天页面直接回复已读
         window.imsdk.im.sendP2PMessageReadAck(message.messageKey, message.fromId, message.messageSequence);
         // 修改会话的 readedSeq

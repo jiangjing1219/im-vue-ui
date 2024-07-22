@@ -8,19 +8,13 @@
     <div class="right">
       <div class="top">
         <div class="top-item">
-          <span class="top-text">首页</span>
+          <span class="top-text" @click="tabValue = 1">登录</span>
         </div>
         <div class="top-item">
-          <span class="top-text">注册</span>
-        </div>
-        <div class="top-item">
-          <span class="top-text">其他</span>
-        </div>
-        <div class="top-item">
-          <span class="top-text">帮助</span>
+          <span class="top-text" @click="tabValue = 2">注册</span>
         </div>
       </div>
-      <div class="form-wrappepr">
+      <div class="form-wrappepr" v-if="tabValue === 1">
         <h1>欢迎使用，IM 服务</h1>
         <input type="text" class="inputs user" placeholder="请输入邮箱或者账号" v-model="userName">
         <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password">
@@ -30,6 +24,27 @@
           <div class="divider">
             <span class="line"></span>
             <span class="divider-text">其他方式登陆</span>
+            <span class="line"></span>
+          </div>
+          <div class="other-login-wrapper">
+            <div class="other-login-item">
+              <img src="../../assets/QQ.png" alt="QQ">
+            </div>
+            <div class="other-login-item">
+              <img src="../../assets/WeChat.png" alt="WeChat">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-wrappepr" v-if="tabValue === 2">
+        <h1>欢迎注册，IM 账号</h1>
+        <input type="text" class="inputs user" placeholder="请输入邮箱或者账号" v-model="userName">
+        <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password">
+        <button @click="debouncedRegister">注册</button>
+        <div class="other-login">
+          <div class="divider">
+            <span class="line"></span>
+            <span class="divider-text">其他方式注册</span>
             <span class="line"></span>
           </div>
           <div class="other-login-wrapper">
@@ -78,6 +93,7 @@ if (!ImSdk) {
 
 const userName = ref('jiangjing');
 const password = ref('123456');
+const tabValue = ref(1);
 
 /**
  * 登录需要做的初始化信息同步
@@ -157,7 +173,7 @@ const submit = () => {
         userInfoStore.onlineState = 0;
         ElNotification({
           title: 'Error',
-          message: '业务系统登陆失败！请联系业务系统管理员1',
+          message: data.msg || '业务系统登陆失败！请联系业务系统管理员',
           type: 'error',
         });
       }
@@ -172,7 +188,33 @@ const submit = () => {
       });
     });
 };
-const debouncedSubmit = debounce({ delay: 500 }, submit);
+
+const register = () => {
+  const requestData = {
+    userName: userName.value,
+    password: password.value,
+    registerType: 1,
+  };
+  axios.post('http://127.0.0.1:8300/v1/register', requestData).then((data) => {
+    console.log(data);
+    if (data.data.code === 200) {
+      tabValue.value = 1;
+      ElNotification({
+        title: 'Success',
+        message: '账号注册成功，欢迎登录',
+        type: 'success',
+      });
+    } else {
+      ElNotification({
+        title: '失败结果',
+        message: data.data.msg,
+        type: 'error',
+      });
+    }
+  });
+};
+const debouncedSubmit = debounce({ delay: 1000 }, submit);
+const debouncedRegister = debounce({ delay: 1000 }, register);
 </script>
 
 <style scoped lang="scss">
@@ -281,13 +323,15 @@ body::after {
       width: 80%;
       margin-left: 38px;
       color: rgb(51, 52, 124);
-      font-size: 20px;
+      font-size: 30px;
       font-weight: 600;
       font-family: "Century Gothic", Times, serif;
       position: absolute;
       left: 50%;
       top: 5%;
       transform: translate(-50%, 0);
+      display: flex;
+      justify-content: space-around;
 
       .top-item {
         float: left;
@@ -309,7 +353,7 @@ body::after {
     }
 
     .form-wrappepr {
-      width: 60%;
+      width: 80%;
       position: absolute;
       left: 50%;
       top: 50%;
