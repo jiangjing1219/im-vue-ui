@@ -23,7 +23,14 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
       if (!this.messageRecordMap[userId]) {
         this.messageRecordMap[userId] = [];
       }
-      this.messageRecordMap[userId].push(messageRecord);
+      // eslint-disable-next-line max-len
+      const target = this.messageRecordMap[userId].find((item) => item.messageId === messageRecord.messageId);
+      if (messageRecord.fromId === '324431782084609' && target) {
+        // 智能对话回复的消息
+        target.messageBody += messageRecord.messageBody;
+      } else {
+        this.messageRecordMap[userId].push(messageRecord);
+      }
       // 判读是否是当前用户发送的消息，如果是接受消息，需要更新未读数
       if (!messageRecord.isMe) {
         // 触发消息重排序
@@ -59,23 +66,32 @@ export const useMessageRecordStore = defineStore('messageRecordMap', {
     onP2PMessageAck(messageAck: any) {
       // 设置 message 的 key 和 seq
       // eslint-disable-next-line max-len
-      this.messageRecordMap[messageAck.toId] = this.messageRecordMap[messageAck.toId]?.map((messageRecord) => {
-        if (messageRecord.messageId === messageAck.messageId) {
-          return {
-            ...messageRecord,
-            messageSequence: messageAck.messageSequence,
-            messageKey: messageAck.messageKey,
-          };
-        }
-        return messageRecord;
-      });
-      // eslint-disable-next-line max-len
       const targetMessageRecord = this.messageRecordMap[messageAck.toId].find((messageRecord) => messageRecord.messageId === messageAck.messageId);
       if (targetMessageRecord) {
         targetMessageRecord.messageKey = messageAck.messageKey;
         targetMessageRecord.messageSequence = messageAck.messageSequence;
+        targetMessageRecord.messageStatus = 1;
         // this.sortP2PMessageList(messageAck.toId);
       }
+    },
+    onP2PMessageReceiveAck(messageAck: any) {
+      // 设置 message 的接收标识
+      // eslint-disable-next-line max-len
+      const targetMessageRecord = this.messageRecordMap[messageAck.fromId].find((messageRecord) => messageRecord.messageKey === messageAck.messageKey);
+      if (targetMessageRecord) {
+        targetMessageRecord.messageStatus = 2;
+      }
+    },
+    onMessageReadReceipt(messageAck: any) {
+      // 设置 message 已读标识
+      // eslint-disable-next-line max-len
+      this.messageRecordMap[messageAck.fromId] = this.messageRecordMap[messageAck.fromId].map((messageRecord) => {
+        if (messageRecord.messageSequence <= messageAck.messageSequence) {
+          // 返回一个新的对象，而不是直接修改传入的参数
+          return { ...messageRecord, messageStatus: 3 };
+        }
+        return messageRecord;
+      });
     },
     sortP2PMessageList(userId: string) {
       // eslint-disable-next-line max-len

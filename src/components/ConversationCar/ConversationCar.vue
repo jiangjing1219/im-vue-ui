@@ -6,10 +6,10 @@
         <div style="display: flex;flex-direction: column;justify-content: space-between;width: 100%;margin-left: 12px">
           <div style="width: 100%;display: flex;justify-content: space-between">
             <div style="display: flex;justify-content: space-between;width: 100%">
-              <el-text class="mx-1" type="primary" style="align-self: flex-start;max-width: 250px" size="large" truncated>
+              <el-text class="mx-1" type="primary" style="align-self: flex-start;max-width: 180px" size="large" truncated>
                 {{ conversationTitle }}
               </el-text>
-              <div>3小时前</div>
+              <div v-if="lastMessage">{{getTimeDifference(lastMessage?.messageTime)}}</div>
             </div>
           </div>
           <div style="align-self: flex-start">
@@ -21,7 +21,9 @@
       </div>
       <div style="display: flex;justify-content: space-between; padding-top: 26px">
         <div style="display: flex;" v-if="lastMessage">
-          <el-icon style="margin-right: 5px" :class="{'rotate-180': !lastMessage?.isMe}"><Promotion /></el-icon>
+          <el-icon style="margin-right: 5px; color: #179adb" :class="{'rotate-180': !lastMessage?.isMe}">
+            <Position />
+          </el-icon>
           <el-text type="info" size="large" line-clamp="1">{{lastMessage.messageBody}}</el-text>
         </div>
         <div v-if="unreadCount > 0">
@@ -34,12 +36,13 @@
 
 <script setup lang="ts">
 import Avatar from '@/components/Avatar/Avatar.vue';
-import { Promotion } from '@element-plus/icons-vue';
+import { Position } from '@element-plus/icons-vue';
 import { useConversationSetStore } from '@/store/conversationSet';
 import { useConcatListStore } from '@/store/contactsList';
 import { useMessageRecordStore } from '@/store/messageRecord';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
+import { getTimeDifference } from '@/utils/TimeUtil';
 
 export interface Props {
   conversationId?: string
@@ -90,7 +93,7 @@ const avatarSrc = computed(() => {
   } else {
     name = concatListStore.getGroupInfo(props.targetId)?.groupName;
   }
-  return `https://robohash.org/${name}?set=set4&size=200x200`;
+  return `https://robohash.org/${name}?set=set${props.conversationType === 0 ? '4' : '2'}&size=200x200`;
 });
 
 const onlineStatus = computed(() => {
@@ -101,11 +104,7 @@ const onlineStatus = computed(() => {
   return 'offline';
 });
 
-const lastMessage = computed(() => {
-  const message = messageRecordStore.getLastMessage(props.targetId, props.conversationType);
-  console.log('mesg', message);
-  return message;
-});
+const lastMessage = computed(() => messageRecordStore.getLastMessage(props.targetId, props.conversationType));
 </script>
 
 <style scoped>

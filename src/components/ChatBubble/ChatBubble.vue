@@ -10,6 +10,7 @@ interface Props {
   conversationType: number;
   targetId: string;
   fromId: string;
+  messageStatus: number;
 }
 
 // eslint-disable-next-line no-undef
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
   conversationType: 0,
   targetId: '',
   fromId: '',
+  messageStatus: 0,
 });
 
 const backgroundColor = props.type === 'mine' ? '#4F9DDE' : '#F5F8FA';
@@ -33,6 +35,24 @@ const nickName = computed(() => {
     return conversationStore.getMemberNickName(props.targetId, props.fromId);
   }
   return '';
+});
+
+const msgStatus = computed(() => {
+  if (props.type === 'other') {
+    return '已读';
+  }
+  switch (props.messageStatus) {
+    case 0:
+      return '发送中';
+    case 1:
+      return '已发送';
+    case 2:
+      return '已送达';
+    case 3:
+      return '已读';
+    default:
+      return '';
+  }
 });
 
 // 使用计算属性
@@ -55,12 +75,18 @@ const avatarSrc = computed(() => {
       <Avatar :src='avatarSrc' status='online' size="40px" statusIconSize="0px"></Avatar>
     </div>
     <div class="styled-chat-bubble">
-      <div class="chat-bubble-nick-name" v-if="props.conversationType === 1">{{nickName}}</div>
+      <div class="chat-bubble-nick-name" v-if="props.conversationType === 1">
+        <el-text>
+          {{nickName}}
+        </el-text>
+      </div>
       <div class="bubble">
-        <slot>消息内容</slot>
+        <el-text size="large" style="color: #2c3e50">
+          <slot>消息内容</slot>
+        </el-text>
       </div>
       <div class="message-time">
-        {{ time }}
+        {{props.conversationType === 0 ? `${time} ${msgStatus}` :time }}
       </div>
     </div>
     <div v-if="props.type === 'mine'" style="margin: 12px">
@@ -78,8 +104,6 @@ const avatarSrc = computed(() => {
 
 .chat-bubble-nick-name {
   text-align: v-bind(textAlign);
-  font-size: 0.8rem;
-  color: rgba(33, 33, 33, 0.58);
   margin-bottom: 5px;
 }
 .styled-chat-bubble {

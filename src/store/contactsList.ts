@@ -13,7 +13,7 @@ const generateGroupName = (group: ImGroupEntity) => {
   // 如果成员列表长度超过4，则只取前4个成员的别名
   const aliasesToShow = memberList.slice(0, memberList.length > 5 ? 5 : memberList.length)
     .map((item) => item.alias);
-  return aliasesToShow.join('、'); // 使用 join 方法避免手动添加最后一个分隔符的问题
+  return `${aliasesToShow.join('、')}..等${memberList.length}人`; // 使用 join 方法避免手动添加最后一个分隔符的问题
 };
 /**
  * 联系人列表
@@ -83,9 +83,11 @@ export const useConcatListStore = defineStore('contactsList', {
       window.imsdk.im.getRelation(friendId)
         .then((res: any) => {
           const friendShip = res.data;
+          // todo 需要查询在线状态
           const target = this.friendShipList.find((item) => item.toId === friendShip.toId);
           if (target) {
             // 如果已经存在直接替换
+            // eslint-disable-next-line max-len
             this.friendShipList = this.friendShipList.map((item) => (item.toId === friendShip.toId ? target : item));
           } else {
             this.friendShipList.unshift(friendShip);

@@ -91,8 +91,8 @@ if (!ImSdk) {
   // 可以根据需要进行错误处理或提供默认值
 }
 
-const userName = ref('jiangjing');
-const password = ref('123456');
+const userName = ref('');
+const password = ref('');
 const tabValue = ref(1);
 
 /**
@@ -190,6 +190,14 @@ const submit = () => {
 };
 
 const register = () => {
+  if (!userName.value) {
+    ElMessage.error('请输入用户名!');
+    return;
+  }
+  if (!password.value) {
+    ElMessage.error('请输入密码!');
+    return;
+  }
   const requestData = {
     userName: userName.value,
     password: password.value,

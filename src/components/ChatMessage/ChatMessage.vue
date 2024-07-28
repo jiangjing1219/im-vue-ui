@@ -10,9 +10,10 @@
             <chat-bubble
               :type="message.isMe ? 'mine' : 'other'"
               :conversation-type="currentConversation.conversationType"
-              :time="dayjs(message.messageTime).format('YYYY年-MM月-DD日 HH:mm')"
+              :time="dayjs(message.messageTime).format('YYYY-MM-DD HH:mm')"
               :target-id="currentConversation.toId"
               :from-id="message.fromId"
+              :message-status="message.messageStatus"
               v-for="message in messageList" :key="message.messageId">
               {{ message.messageBody }}
             </chat-bubble>

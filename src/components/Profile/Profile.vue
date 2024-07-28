@@ -12,7 +12,6 @@ import Avatar from '@/components/Avatar/Avatar.vue';
       status="online"
       statusIconSize="0px"
     />
-
   </div>
 </template>
 
@@ -26,8 +25,8 @@ import Avatar from '@/components/Avatar/Avatar.vue';
   justify-items: center;
   position: relative; /* 确保 .absolute-item 相对于这个容器定位 */
   /* 占满可视高度 100vh */
-  height: 100vh;
-  margin: 2vh;
+  height: 100%;
+ /* margin: 2vh;*/
   /* 溢出出现滚动条 */
   overflow-y: auto;
 }

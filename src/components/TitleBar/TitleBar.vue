@@ -32,7 +32,7 @@ const avatarSrc = computed(() => {
   } else if (currentConversation.value?.conversationType === 1) {
     name = concatListStore.getGroupInfo(currentConversation.value.toId)?.groupName;
   }
-  return `https://robohash.org/${name}?set=set4&size=200x200`;
+  return `https://robohash.org/${name}?set=set${currentConversation.value?.conversationType === 0 ? '4' : '2'}&size=200x200`;
 });
 
 const nickName = computed(() => {

@@ -50,7 +50,7 @@ export interface MessageRecord {
   clientType: any,
   messageRandom?: any,
   messageType: any,
-  // 0 未发送 1 已发送 2 已送达 3 已读
+  // 0 未发送 1 已发送(接收到服务器回复的ack) 2 已送达（在线-回复接收成功ack，不在线服务器代回复ack） 3 已读（接收端已读）
   messageStatus: any,
 }
 
@@ -73,7 +73,7 @@ export interface GroupMessageRecord {
   clientType: any,
   messageRandom?: any,
   messageType: any,
-  // 0 未发送 1 已发送 2 已送达 3 已读
+  // 0 未发送 1 已发送(接收到服务器回复的ack) 2 已送达（在线-回复接收成功ack，不在线服务器代回复ack） 3 已读（接收端已读）
   messageStatus: any,
   memberIds?: string[],
   imei?:string,

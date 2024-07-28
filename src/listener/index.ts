@@ -42,57 +42,49 @@ const ListenerMap = () => {
       console.log(`onTestMessage ：${e}`);
     },
     /**
-     * {
-     *     "appId": 10000,
-     *     "clientType": 1,
-     *     "command": 1046,
-     *     "data": {
-     *         "code": 200,
-     *         "data": {
-     *             "messageKey": 363421415505921,
-     *             "messageId": "oi94zkhhws1719593634751",
-     *             "messageSequence": 3
-     *         },
-     *         "message": "success",
-     *         "ok": true
-     *     },
-     *     "imei": "windows_chrome_127.0.0.0",
-     *     "toId": "311968820887553",
-     *     "userId": "311968820887553"
-     * }
+     * 消息发送成功的ack
      * @param e
      */
     onP2PMessageAck: (e: never) => {
       messageRecordStore.onP2PMessageAck(JSON.parse(e).data.data);
-      console.log('onP2PMessageAck-消息发送成功ack', JSON.parse(e).data.data);
     },
+    /**
+     * 接收端接收到消息
+     * {
+     *     "toId": "311968820887553", 自身 id
+     *     "messageKey": 368116557152257,
+     *     "serverSend": true,
+     *     "messageSequence": 647,
+     *     "fromId": "312144459464705"  好友id
+     * }
+     * @param e
+     */
+    onP2PMessageReceiveAck: (e: never) => {
+      messageRecordStore.onP2PMessageReceiveAck(JSON.parse(e).data);
+    },
+    /**
+     * 发送的消息对方已读
+     * {
+     *     "conversationType": 0,
+     *     "toId": "311968820887553", 当前用户id
+     *     "messageSequence": 641,
+     *     "fromId": "312144459464705" 好友id
+     * }
+     * @param e
+     */
     onMessageReadReceipt: (e: never) => {
-      console.log('onMessageReadReceipt-接收方已读的回执', JSON.parse(e).data);
+      // 标识小于当前 messageSequence 的消息都已经已读
+      messageRecordStore.onMessageReadReceipt(JSON.parse(e).data);
     },
+    /**
+     * 好友发送的消息，自身已读同步
+     * @param e
+     */
     onMessageReadSync: (e: never) => {
       console.log(`onMessageReadSync-自身已读标识同步 ：${e}`);
     },
     /**
-     * {
-     *     "appId": 10000,
-     *     "clientType": 1,
-     *     "command": 1108,
-     *     "data": {
-     *         "toId": "312144459464705",
-     *         "messageKey": 363718034587649,
-     *         "messageTime": 1719735073000,
-     *         "clientType": 1,
-     *         "messageBody": "{\"type\":1,\"content\":\"你好\"}",
-     *         "appId": 10000,
-     *         "imei": "windows_chrome_126.0.0.0",
-     *         "messageId": "8t2a3tjas1719735073719",
-     *         "messageSequence": 8,
-     *         "fromId": "311968820887553"
-     *     },
-     *     "imei": "windows_chrome_127.0.0.0",
-     *     "toId": "311968820887553",
-     *     "userId": "311968820887553"
-     * }
+     * 自身发送的消息同步
      *
      * @param e
      */
@@ -117,6 +109,10 @@ const ListenerMap = () => {
     },
     onP2PMessage: (e: any) => {
       const receiveMessage = JSON.parse(e).data;
+      console.log('onP2PMessage-接收消息', receiveMessage);
+      // 接收到消息直接回复ack
+      // eslint-disable-next-line max-len
+      window.imsdk.im.sendP2PMessageReceiveAck(receiveMessage.messageKey, receiveMessage.fromId, receiveMessage.messageSequence);
       const message = {
         isMe: false,
         messageRandom: '',
@@ -154,6 +150,7 @@ const ListenerMap = () => {
       // 事件发布   fromId   toID - 自己   会话id
       if (conversationSetStore.currentConversation?.conversationId === conversationId) {
         // 直接回复已读 ack, 后续修改为点击进入聊天框， 如果当前页面是停留在当前好友的聊天页面直接回复已读
+        // eslint-disable-next-line max-len
         window.imsdk.im.sendP2PMessageReadAck(message.messageKey, message.fromId, message.messageSequence);
         // 修改会话的 readedSeq
         conversationSetStore.setP2PConversationReadSeq(conversationId, message.messageSequence);
@@ -193,6 +190,8 @@ const ListenerMap = () => {
       concatListStore.onAddFriend(JSON.parse(e).data.toId);
     },
     /**
+     * 新建群聊事件回调
+     *
      * {
      *     "groupType": 1,
      *     "groupId": "b5af75d37af049019e0e7b49052038bb",
@@ -211,10 +210,11 @@ const ListenerMap = () => {
      * @param e
      */
     onCreateGroup: (e: any) => {
-      console.log('新建群聊事件回调', JSON.parse(e).data);
       concatListStore.onAddGroup(JSON.parse(e).data);
     },
     /**
+     * 接收到群聊消息
+     *
      * {
      *     "messageKey": 361972954562561,
      *     "messageTime": 1718902954000,
@@ -236,7 +236,6 @@ const ListenerMap = () => {
      * @param e
      */
     onGroupMessage: (e: any) => {
-      console.log('接收到群聊消息', JSON.parse(e).data);
       const receiveMessage = JSON.parse(e).data;
       receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
       messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
@@ -259,6 +258,7 @@ const ListenerMap = () => {
         conversationSetStore.addConversationSet(conversation);
       }
       // 直接发送已读标识
+      // eslint-disable-next-line max-len
       window.imsdk.im.senGroupMessageReadAck(receiveMessage.groupId, receiveMessage.fromId, receiveMessage.messageSequence);
     },
     /**
@@ -277,6 +277,7 @@ const ListenerMap = () => {
       console.log('接收到发送群聊消息的ack，服务端接收到消息, 可以标识该消息已经发送成功', JSON.parse(e).data);
     },
     /**
+     * 其他端在线登录
      * {
      *     "clientType": 1,
      *     "appId": 10000,
@@ -307,10 +308,10 @@ const ListenerMap = () => {
      * @param e
      */
     onUserOnlineStatusChangeSync: (e: any) => {
-      console.log('其他端在线登录', JSON.parse(e).data);
       userInfoStore.onlineStateChange(JSON.parse(e).data);
     },
     /**
+     * 其他用户现在状态变更通知
      * {
      *     "clientType": 1,
      *     "appId": 10000,
@@ -332,11 +333,11 @@ const ListenerMap = () => {
      * @param e
      */
     onUserOnlineStatusChangeNotify: (e: any) => {
-      console.log('其他用户现在状态变更通知', JSON.parse(e).data);
       const stateInfo = JSON.parse(e).data;
       concatListStore.onlineStatusChange(stateInfo.userId, stateInfo.status);
     },
     /**
+     * 离线消息拉取
      * [
      *     {
      *         "appId": 10000,
@@ -357,7 +358,6 @@ const ListenerMap = () => {
      * @param messageList
      */
     onOfflineMessage: (messageList: any) => {
-      console.log('离线消息拉取', messageList);
       messageRecordStore.dispatcherOfflineMessage(messageList);
     },
   };
