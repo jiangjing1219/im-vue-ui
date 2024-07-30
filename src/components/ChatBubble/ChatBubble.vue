@@ -70,7 +70,9 @@ const avatarSrc = computed(() => {
 </script>
 
 <template>
-  <div class="chat-bubble-container">
+  <div
+    class="chat-bubble-container"
+    :class="{'chat-bubble-left': props.type === 'other', 'chat-bubble-right': props.type === 'mine'}">
     <div v-if="props.type !== 'mine'" style="margin: 12px">
       <Avatar :src='avatarSrc' status='online' size="40px" statusIconSize="0px"></Avatar>
     </div>
@@ -135,5 +137,13 @@ const avatarSrc = computed(() => {
   color: rgba(33, 33, 33, 0.58);
   opacity: 0.6;
   align-self: v-bind(alignSelf);
+}
+
+.chat-bubble-left {
+  margin-right: 70px;
+}
+
+.chat-bubble-right {
+  margin-left: 70px;
 }
 </style>
