@@ -111,7 +111,7 @@ export const useConcatListStore = defineStore('contactsList', {
         });
       // 添加 conversion
       const groupConversion: Conversation = {
-        conversationId: `${userInfoStore.userId}_${group.groupId}`,
+        conversationId: `1_${userInfoStore.userId}_${group.groupId}`,
         conversationType: 1,
         fromId: userInfoStore.userId,
         toId: group.groupId,

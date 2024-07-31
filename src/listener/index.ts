@@ -238,6 +238,7 @@ const ListenerMap = () => {
     onGroupMessage: (e: any) => {
       const receiveMessage = JSON.parse(e).data;
       receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
+      receiveMessage.isMe = false;
       messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
       const conversationId = `1_${userInfoStore.userId}_${receiveMessage.groupId}`;
       // 判断该会话是否存在，不存在直接创建会话
@@ -260,6 +261,34 @@ const ListenerMap = () => {
       // 直接发送已读标识
       // eslint-disable-next-line max-len
       window.imsdk.im.senGroupMessageReadAck(receiveMessage.groupId, receiveMessage.fromId, receiveMessage.messageSequence);
+    },
+    /**
+     * {
+     *     "messageKey": 369381422923777,
+     *     "messageTime": 1722435586000,
+     *     "clientType": 1,
+     *     "messageBody": "{\"type\":1,\"content\":\"群聊消息同步\"}",
+     *     "appId": 10000,
+     *     "groupId": "41c5a4f8800c4eceac4851491037290d",
+     *     "imei": "macintosh;_chrome_127.0.0.0",
+     *     "messageId": "1nut7v0ogp1722435586477",
+     *     "messageSequence": 4,
+     *     "fromId": "311968820887553",
+     *     "memberIds": [
+     *         "331813675335681",
+     *         "312144459464705",
+     *         "324431782084609",
+     *         "311968820887553"
+     *     ]
+     * }
+     * @param e
+     */
+    onGroupMessageSync: (e: any) => {
+      console.log('群聊消息同步', JSON.parse(e).data);
+      const receiveMessage = JSON.parse(e).data;
+      receiveMessage.messageBody = JSON.parse(receiveMessage.messageBody).content;
+      receiveMessage.isMe = true;
+      messageRecordStore.addGroupMessageRecord(receiveMessage.groupId, receiveMessage);
     },
     /**
      * {

@@ -17,7 +17,7 @@
       <div class="form-wrappepr" v-if="tabValue === 1">
         <h1>欢迎使用，IM 服务</h1>
         <input type="text" class="inputs user" placeholder="请输入邮箱或者账号" v-model="userName">
-        <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password">
+        <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password"  @keydown.enter="debouncedSubmit">
         <span class="tips">忘记密码</span>
         <button @click="debouncedSubmit">登陆</button>
         <div class="other-login">
@@ -39,8 +39,8 @@
       <div class="form-wrappepr" v-if="tabValue === 2">
         <h1>欢迎注册，IM 账号</h1>
         <input type="text" class="inputs user" placeholder="请输入邮箱或者账号" v-model="userName">
-        <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password">
-        <button @click="debouncedRegister">注册</button>
+        <input type="password" class="inputs pwd" placeholder="请输入密码" v-model="password" @keydown.enter="debouncedRegister">
+        <button @click="debouncedRegister" @keydown.enter="debouncedRegister">注册</button>
         <div class="other-login">
           <div class="divider">
             <span class="line"></span>
@@ -131,7 +131,7 @@ const submit = () => {
     text: '登录中，请稍等...',
     background: 'rgba(0, 0, 0, 0.7)',
   });
-  axios.post('http://127.0.0.1:8300/v1/login', requestData)
+  axios.post('http://192.168.1.3:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
         ElNotification({
@@ -145,7 +145,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://192.168.1.3:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           // 修改登录状态
           userInfoStore.onlineState = 1;
           requestData.userId = userId;
@@ -203,7 +203,7 @@ const register = () => {
     password: password.value,
     registerType: 1,
   };
-  axios.post('http://127.0.0.1:8300/v1/register', requestData).then((data) => {
+  axios.post('http://192.168.1.3:8300/v1/register', requestData).then((data) => {
     console.log(data);
     if (data.data.code === 200) {
       tabValue.value = 1;

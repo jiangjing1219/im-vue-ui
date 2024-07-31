@@ -16,7 +16,10 @@ export const useConversationSetStore = defineStore('conversationSet', {
   },
   actions: {
     addConversationSet(conversation: Conversation) {
-      this.conversationSet.unshift(conversation);
+      if (!this.getConversationById(conversation.conversationId)) {
+        console.log('@@添加会话', conversation);
+        this.conversationSet.unshift(conversation);
+      }
     },
     syncConversationSet() {
       window.imsdk.im.syncConversationSet(0, 100)
