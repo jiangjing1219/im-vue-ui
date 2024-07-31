@@ -63,7 +63,7 @@
 
 <script setup>
 import {
-  ref, inject,
+  ref, inject, watch,
 } from 'vue';
 import { ElLoading, ElMessage, ElNotification } from 'element-plus';
 import axios from 'axios';
@@ -91,8 +91,8 @@ if (!ImSdk) {
   // 可以根据需要进行错误处理或提供默认值
 }
 
-const userName = ref('');
-const password = ref('');
+const userName = ref('jiangjing');
+const password = ref('123456');
 const tabValue = ref(1);
 
 /**
@@ -223,6 +223,13 @@ const register = () => {
 };
 const debouncedSubmit = debounce({ delay: 1000 }, submit);
 const debouncedRegister = debounce({ delay: 1000 }, register);
+
+watch(() => tabValue.value, (newValue) => {
+  if (newValue === 2) {
+    userName.value = '';
+    password.value = '';
+  }
+});
 </script>
 
 <style scoped lang="scss">
