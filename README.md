@@ -21,8 +21,8 @@ npm run build
 #### 2、状态管理：pinia
 #### 3、路由：vue-router
 #### 4、数据流转机制
+![前台数据流转机制](https://github.com/user-attachments/assets/963af3fc-7369-4698-9c93-2ab3d4260e5b)
 
-  
 # 二、页面展示
 ### 1、登录页面
 ![登录页面](https://github.com/user-attachments/assets/b87d0d1c-2809-415f-9f7d-4a35a6c29025)
