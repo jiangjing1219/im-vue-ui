@@ -84,14 +84,14 @@ router.beforeEach(async (to, from, next) => {
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr);
       if (userInfo && userInfo.userName && userInfo.password && userInfo.loginType) {
-        const result = await axios.post('http://192.168.1.3:8300/v1/login', userInfo);
+        const result = await axios.post('http://127.0.0.1:8300/v1/login', userInfo);
         if (result.data.code === 200) {
           const {
             appId,
             imUserSign,
             userId,
           } = result.data.data;
-          window.imsdk.im.init('http://192.168.1.3:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk: any) => {
+          window.imsdk.im.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk: any) => {
             console.log('初始化成功', sdk);
             const userInfoStore = useUserInfoStore();
             // 修改登录状态

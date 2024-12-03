@@ -131,7 +131,7 @@ const submit = () => {
     text: '登录中，请稍等...',
     background: 'rgba(0, 0, 0, 0.7)',
   });
-  axios.post('http://192.168.1.3:8300/v1/login', requestData)
+  axios.post('http://127.0.0.1:8300/v1/login', requestData)
     .then(({ data }) => {
       if (data.code === 200) {
         ElNotification({
@@ -145,7 +145,7 @@ const submit = () => {
           userId,
           userSign,
         } = data.data;
-        ImSdk.init('http://192.168.1.3:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
+        ImSdk.init('http://127.0.0.1:8000/v1', appId, userId, imUserSign, ListenerMap(), (sdk) => {
           // 修改登录状态
           userInfoStore.onlineState = 1;
           requestData.userId = userId;
@@ -203,7 +203,7 @@ const register = () => {
     password: password.value,
     registerType: 1,
   };
-  axios.post('http://192.168.1.3:8300/v1/register', requestData).then((data) => {
+  axios.post('http://192.168.1.5:8300/v1/register', requestData).then((data) => {
     console.log(data);
     if (data.data.code === 200) {
       tabValue.value = 1;
